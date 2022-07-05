@@ -1,0 +1,212 @@
+{
+	"name": "AzureSqlTable1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SciClientID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SciClientLocationId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProviderId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProviderType",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FirstName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MiddleName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Prefix",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Suffix",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PrimaryPhone",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SecondaryPhone",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Fax",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Website",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Email",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEA",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NPI",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProviderPicture",
+				"type": "varbinary"
+			},
+			{
+				"name": "MarketingPicture",
+				"type": "varbinary"
+			},
+			{
+				"name": "Birthdate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "IsPlatform",
+				"type": "bit"
+			},
+			{
+				"name": "LocationID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "Gender",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PersonalStatement",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BoardCertifications",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EducationAndTraining",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Affiliation",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PlatformLocationId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UsesOnlineScheduling",
+				"type": "bit"
+			},
+			{
+				"name": "AcceptsNewPatients",
+				"type": "bit"
+			},
+			{
+				"name": "AcceptsVideoVisits",
+				"type": "bit"
+			},
+			{
+				"name": "ZipCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CreatedOn",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "LastUpdatedOn",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "RowHash",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "UpdatedBy",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DefaultBookingInstructionForPatient",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Fellowship",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Internship",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PCPNumber",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProviderBio",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Residency",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProviderPictureFileName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PictureLink",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VideoLink",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Providers"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

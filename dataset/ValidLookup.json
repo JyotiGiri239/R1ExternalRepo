@@ -1,0 +1,77 @@
+{
+	"name": "ValidLookup",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageNew",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().FileName",
+					"type": "Expression"
+				},
+				"container": "container1"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "OperationType",
+				"type": "String"
+			},
+			{
+				"name": "NPI",
+				"type": "String"
+			},
+			{
+				"name": "PlatformName",
+				"type": "String"
+			},
+			{
+				"name": "PlatformProviderId",
+				"type": "String"
+			},
+			{
+				"name": "FirstName",
+				"type": "String"
+			},
+			{
+				"name": "LastName",
+				"type": "String"
+			},
+			{
+				"name": "ZipCode",
+				"type": "String"
+			},
+			{
+				"name": "City",
+				"type": "String"
+			},
+			{
+				"name": "State",
+				"type": "String"
+			},
+			{
+				"name": "InsuranceName",
+				"type": "String"
+			},
+			{
+				"name": "InsuranceDescription",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

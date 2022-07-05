@@ -1,0 +1,111 @@
+{
+	"name": "AzureSqlTable2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDBForBlobToSql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "NPI",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProviderId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PlatformName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FirstName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "City",
+				"type": "nvarchar"
+			},
+			{
+				"name": "State",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZipCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "InsuranceName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "InsuranceDescription",
+				"type": "nvarchar"
+			},
+			{
+				"name": "JobId",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "Status",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Errors",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SciClientID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SciClientLocationId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CreatedOn",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "LastUpdatedOn",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "RowHash",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "UpdatedBy",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Temp_AdfInsuranceMaster"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

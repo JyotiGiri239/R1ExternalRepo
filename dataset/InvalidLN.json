@@ -1,0 +1,96 @@
+{
+	"name": "InvalidLN",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageNew",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "container1"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "OperationType",
+				"type": "String"
+			},
+			{
+				"name": "NPI",
+				"type": "String"
+			},
+			{
+				"name": "PlatformName",
+				"type": "String"
+			},
+			{
+				"name": "PlatformProviderId",
+				"type": "String"
+			},
+			{
+				"name": "FirstName",
+				"type": "String"
+			},
+			{
+				"name": "LastName",
+				"type": "String"
+			},
+			{
+				"name": "ZipCode",
+				"type": "String"
+			},
+			{
+				"name": "City",
+				"type": "String"
+			},
+			{
+				"name": "State",
+				"type": "String"
+			},
+			{
+				"name": "InsuranceName",
+				"type": "String"
+			},
+			{
+				"name": "InsuranceDescription",
+				"type": "String"
+			},
+			{
+				"name": "Key Lookup",
+				"type": "String"
+			},
+			{
+				"name": "ErrorMssage",
+				"type": "String"
+			},
+			{
+				"name": "InvalidKeyLookup",
+				"type": "String"
+			},
+			{
+				"name": "InvalidZipCode",
+				"type": "String"
+			},
+			{
+				"name": "InvalidNPI",
+				"type": "String"
+			},
+			{
+				"name": "InvalidProviderID",
+				"type": "String"
+			},
+			{
+				"name": "InvalidPlatfromName",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,71 @@
+{
+	"name": "PlatformMapping",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ProviderPlatformMappingID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EhrPlatformID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SciClientID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SciClientLocationId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProviderId",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "UserId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CreatedOn",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "LastUpdatedOn",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "RowHash",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "UpdatedBy",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "ProviderPlatformMapping"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

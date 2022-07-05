@@ -1,0 +1,107 @@
+{
+	"name": "dataflowforBlobToSQL",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText7",
+						"type": "DatasetReference"
+					},
+					"name": "dataflowforBlobToSQL"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable2",
+						"type": "DatasetReference"
+					},
+					"name": "blobToSql",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorageNew",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumnforBlobToSQL"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          OperationType as string,",
+				"          NPI as string,",
+				"          PlatformName as string,",
+				"          PlatformProviderId as string,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          ZipCode as string,",
+				"          City as string,",
+				"          State as string,",
+				"          InsuranceName as string,",
+				"          InsuranceDescription as string,",
+				"          {Key Lookup} as string,",
+				"          ErrorMssage as string,",
+				"          InvalidKeyLookup as string,",
+				"          InvalidZipCode as string,",
+				"          InvalidNPI as string,",
+				"          InvalidProviderID as string,",
+				"          InvalidPlatfromName as string,",
+				"          InvalidFN as string,",
+				"          InvalidLN as string,",
+				"          NotExsistZipCode as string,",
+				"          InvalidCity as string,",
+				"          InvalidState as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> dataflowforBlobToSQL",
+				"dataflowforBlobToSQL derive(Errors = concatWS(',', ErrorMssage, InvalidKeyLookup,InvalidZipCode,InvalidNPI,InvalidProviderID,InvalidPlatfromName,InvalidFN,InvalidLN,NotExsistZipCode,InvalidCity,InvalidState),",
+				"          Status = iif(isNull(ErrorMssage)&&isNull(InvalidKeyLookup)&&isNull(InvalidZipCode)&&isNull(InvalidNPI)&&isNull(InvalidProviderID)&&isNull(InvalidPlatfromName)&&isNull(InvalidFN)&&isNull(InvalidLN)&&isNull(NotExsistZipCode), 'success', 'Failed'),",
+				"          IsDeleted = 0,",
+				"          CreatedOn = currentUTC(),",
+				"          LastUpdatedOn = currentUTC(),",
+				"          UserId = 'system',",
+				"          JobId = 01) ~> derivedColumnforBlobToSQL",
+				"derivedColumnforBlobToSQL sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ID as long,",
+				"          NPI as string,",
+				"          ProviderId as string,",
+				"          PlatformName as string,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          City as string,",
+				"          State as string,",
+				"          ZipCode as string,",
+				"          InsuranceName as string,",
+				"          InsuranceDescription as string,",
+				"          JobId as long,",
+				"          Status as string,",
+				"          Errors as string,",
+				"          SciClientID as string,",
+				"          SciClientLocationId as string,",
+				"          UserId as string,",
+				"          CreatedOn as timestamp,",
+				"          LastUpdatedOn as timestamp,",
+				"          RowHash as integer,",
+				"          IsDeleted as boolean,",
+				"          UpdatedBy as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     partitionBy('hash', 1)) ~> blobToSql"
+			]
+		}
+	}
+}

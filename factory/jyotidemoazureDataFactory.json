@@ -1,0 +1,9 @@
+{
+	"name": "jyotidemoazureDataFactory",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "e3d732ea-51cc-4495-8431-bb49ea2ca980",
+		"tenantId": "3abea180-f7a6-466e-905b-f048f74fb7c6"
+	}
+}

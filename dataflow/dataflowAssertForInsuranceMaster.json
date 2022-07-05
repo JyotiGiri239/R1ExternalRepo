@@ -1,0 +1,112 @@
+{
+	"name": "dataflowAssertForInsuranceMaster",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "InsuranceMasterNameAssert",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Invalidinsurancename",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ValidInsuranceNameFile",
+						"type": "DatasetReference"
+					},
+					"name": "ValidCSV"
+				}
+			],
+			"transformations": [
+				{
+					"name": "assertForInsuranceMasterName"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "split1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          OperationType as string,",
+				"          NPI as string,",
+				"          PlatformName as string,",
+				"          PlatformProviderId as string,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          ZipCode as string,",
+				"          City as string,",
+				"          State as string,",
+				"          InsuranceName as string,",
+				"          InsuranceDescription as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"derivedColumn1 assert(expectTrue(iifNull(InsuranceName, 'Can not Be Null', InsuranceName), false, 'checkInsuranceName', null, \"InsuranceName can not be null\")) ~> assertForInsuranceMasterName",
+				"source1 derive(InsuranceName = iifNull(InsuranceName, '', InsuranceName),",
+				"     partitionBy('hash', 1)) ~> derivedColumn1",
+				"assertForInsuranceMasterName derive(ErrorMsg = assertErrorMessages(),",
+				"          ErrorNullInsuranceName = at(assertErrorMessages(),'checkInsuranceName')) ~> derivedColumn2",
+				"derivedColumn2 split(hasError('checkInsuranceName'),",
+				"     disjoint: true) ~> split1@(InvalidInsuranceName, ValidFile)",
+				"split1@InvalidInsuranceName sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string,",
+				"          Column_7 as string,",
+				"          Column_8 as string,",
+				"          Column_9 as string,",
+				"          Column_10 as string,",
+				"          Column_11 as string",
+				"     ),",
+				"     partitionFileNames:['Assert.csvv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     ignoreAssertFailedRows: false,",
+				"     partitionBy('hash', 1)) ~> sink1",
+				"split1@ValidFile sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string,",
+				"          Column_7 as string,",
+				"          Column_8 as string,",
+				"          Column_9 as string,",
+				"          Column_10 as string,",
+				"          Column_11 as string",
+				"     ),",
+				"     partitionFileNames:['AssertValid.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     ignoreAssertFailedRows: false,",
+				"     partitionBy('hash', 1)) ~> ValidCSV"
+			]
+		}
+	}
+}
