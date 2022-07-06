@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "jyotidemoazureDataFactory"
+		},
+		"AzureBlobStorageDemoInsuranceMaster_connectionString": {
+			"value": ""
+		},
+		"AzureBlobStorageForInsuranceMasterName_connectionString": {
+			"value": ""
+		},
+		"AzureBlobStorageNew_connectionString": {
+			"value": ""
+		},
+		"AzureSqlDB_connectionString": {
+			"value": ""
+		},
+		"AzureSqlDBForBlobToSql_connectionString": {
+			"value": ""
+		},
+		"trigger2_properties_typeProperties_scope": {
+			"value": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
+		},
+		"triggerinsurance_properties_typeProperties_scope": {
+			"value": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
+		}
+	}
+}

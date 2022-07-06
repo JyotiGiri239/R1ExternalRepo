@@ -1,0 +1,3714 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "jyotidemoazureDataFactory"
+		},
+		"AzureBlobStorageDemoInsuranceMaster_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageDemoInsuranceMaster'"
+		},
+		"AzureBlobStorageForInsuranceMasterName_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageForInsuranceMasterName'"
+		},
+		"AzureBlobStorageNew_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageNew'"
+		},
+		"AzureSqlDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDB'"
+		},
+		"AzureSqlDBForBlobToSql_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDBForBlobToSql'"
+		},
+		"trigger2_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
+		},
+		"triggerinsurance_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/InsuranceMaster')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flowForInsuranceMasterCSV",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflowAssertInsurance",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"InsuranceMasterName": {},
+									"Provider": {},
+									"PlatformMapping": {},
+									"EhrPlatform": {},
+									"location": {},
+									"ValidInsuranceMasterFile": {},
+									"invalidinsurance": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-07-04T15:38:24Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflowAssertInsurance')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipelineInsuranceMaster')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flowAssertForInsuranceMaster",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflowAssertForInsuranceMaster",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {},
+									"ValidCSV": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-06-30T12:30:46Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflowAssertForInsuranceMaster')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipelineforBlobToSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "DelimitedText8",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadata1').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "dataflowforBlobToSQL",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "1.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "dataflowforBlobToSQL",
+											"type": "DataFlowReference",
+											"parameters": {},
+											"datasetParameters": {
+												"dataflowforBlobToSQL": {
+													"FileName": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												},
+												"blobToSql": {}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-07-05T08:49:22Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DelimitedText8')]",
+				"[concat(variables('factoryId'), '/dataflows/dataflowforBlobToSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "SciClientID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SciClientLocationId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProviderId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProviderType",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FirstName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MiddleName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Prefix",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Suffix",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PrimaryPhone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SecondaryPhone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Fax",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Website",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Email",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DEA",
+						"type": "nvarchar"
+					},
+					{
+						"name": "NPI",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProviderPicture",
+						"type": "varbinary"
+					},
+					{
+						"name": "MarketingPicture",
+						"type": "varbinary"
+					},
+					{
+						"name": "Birthdate",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "IsPlatform",
+						"type": "bit"
+					},
+					{
+						"name": "LocationID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "Gender",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PersonalStatement",
+						"type": "nvarchar"
+					},
+					{
+						"name": "BoardCertifications",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EducationAndTraining",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Affiliation",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PlatformLocationId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "UsesOnlineScheduling",
+						"type": "bit"
+					},
+					{
+						"name": "AcceptsNewPatients",
+						"type": "bit"
+					},
+					{
+						"name": "AcceptsVideoVisits",
+						"type": "bit"
+					},
+					{
+						"name": "ZipCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "UserId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CreatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "LastUpdatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "RowHash",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IsDeleted",
+						"type": "bit"
+					},
+					{
+						"name": "UpdatedBy",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DefaultBookingInstructionForPatient",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Fellowship",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Internship",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PCPNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProviderBio",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Residency",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProviderPictureFileName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PictureLink",
+						"type": "nvarchar"
+					},
+					{
+						"name": "VideoLink",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Providers"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDBForBlobToSql",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "NPI",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProviderId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PlatformName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FirstName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "State",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ZipCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "nvarchar"
+					},
+					{
+						"name": "JobId",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "Status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Errors",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SciClientID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SciClientLocationId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "UserId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CreatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "LastUpdatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "RowHash",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IsDeleted",
+						"type": "bit"
+					},
+					{
+						"name": "UpdatedBy",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Temp_AdfInsuranceMaster"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDBForBlobToSql')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageForInsuranceMasterName",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "R1ExternalInsuranceMaster.csv",
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageForInsuranceMasterName')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText3')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageDemoInsuranceMaster",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Create",
+						"type": "String"
+					},
+					{
+						"name": "1003344417",
+						"type": "String"
+					},
+					{
+						"name": "Prop_2",
+						"type": "String"
+					},
+					{
+						"name": "Prop_3",
+						"type": "String"
+					},
+					{
+						"name": "Prop_4",
+						"type": "String"
+					},
+					{
+						"name": "Prop_5",
+						"type": "String"
+					},
+					{
+						"name": "Prop_6",
+						"type": "String"
+					},
+					{
+						"name": "Prop_7",
+						"type": "String"
+					},
+					{
+						"name": "Prop_8",
+						"type": "String"
+					},
+					{
+						"name": "Prop_9",
+						"type": "String"
+					},
+					{
+						"name": "Capital0",
+						"type": "String"
+					},
+					{
+						"name": "Insurance Name Can not be Null",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageDemoInsuranceMaster')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText4')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText5')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText6')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "invalidinsuranceMaster.csv",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					},
+					{
+						"name": "InvalidZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidNPI",
+						"type": "String"
+					},
+					{
+						"name": "InvalidProviderID",
+						"type": "String"
+					},
+					{
+						"name": "InvalidPlatfromName",
+						"type": "String"
+					},
+					{
+						"name": "InvalidFN",
+						"type": "String"
+					},
+					{
+						"name": "InvalidLN",
+						"type": "String"
+					},
+					{
+						"name": "NotExsistZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidCity",
+						"type": "String"
+					},
+					{
+						"name": "InvalidState",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText7')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().FileName",
+							"type": "Expression"
+						},
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					},
+					{
+						"name": "InvalidZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidNPI",
+						"type": "String"
+					},
+					{
+						"name": "InvalidProviderID",
+						"type": "String"
+					},
+					{
+						"name": "InvalidPlatfromName",
+						"type": "String"
+					},
+					{
+						"name": "InvalidFN",
+						"type": "String"
+					},
+					{
+						"name": "InvalidLN",
+						"type": "String"
+					},
+					{
+						"name": "NotExsistZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidCity",
+						"type": "String"
+					},
+					{
+						"name": "InvalidState",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText8')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					},
+					{
+						"name": "InvalidZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidNPI",
+						"type": "String"
+					},
+					{
+						"name": "InvalidProviderID",
+						"type": "String"
+					},
+					{
+						"name": "InvalidPlatfromName",
+						"type": "String"
+					},
+					{
+						"name": "InvalidFN",
+						"type": "String"
+					},
+					{
+						"name": "InvalidLN",
+						"type": "String"
+					},
+					{
+						"name": "NotExsistZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidCity",
+						"type": "String"
+					},
+					{
+						"name": "InvalidState",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EhrPlatform')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Description",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Active",
+						"type": "bit"
+					},
+					{
+						"name": "SupportsCachedScheduling",
+						"type": "bit"
+					},
+					{
+						"name": "CachedSchedulingChunks",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProvidesIncrementalUpdates",
+						"type": "bit"
+					},
+					{
+						"name": "UserId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CreatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "LastUpdatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "RowHash",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IsDeleted",
+						"type": "bit"
+					},
+					{
+						"name": "UpdatedBy",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "EhrPlatform"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InsuranceMaster')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageDemoInsuranceMaster",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "Insert",
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageDemoInsuranceMaster')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InsuranceMasterNameAssert')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageForInsuranceMasterName",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "Insert",
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageForInsuranceMasterName')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InsuranceName')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageDemoInsuranceMaster",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "Output",
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageDemoInsuranceMaster')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InvalidDemoGraphicsDetails1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					},
+					{
+						"name": "InvalidZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidNPI",
+						"type": "String"
+					},
+					{
+						"name": "InvalidProviderID",
+						"type": "String"
+					},
+					{
+						"name": "InvalidPlatfromName",
+						"type": "String"
+					},
+					{
+						"name": "InvalidFN",
+						"type": "String"
+					},
+					{
+						"name": "InvalidLN",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InvalidDemographicsDetails2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					},
+					{
+						"name": "InvalidZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidNPI",
+						"type": "String"
+					},
+					{
+						"name": "InvalidProviderID",
+						"type": "String"
+					},
+					{
+						"name": "InvalidPlatfromName",
+						"type": "String"
+					},
+					{
+						"name": "InvalidFN",
+						"type": "String"
+					},
+					{
+						"name": "InvalidLN",
+						"type": "String"
+					},
+					{
+						"name": "NotExsistZipCode",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InvalidFN')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					},
+					{
+						"name": "InvalidZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidNPI",
+						"type": "String"
+					},
+					{
+						"name": "InvalidProviderID",
+						"type": "String"
+					},
+					{
+						"name": "InvalidPlatfromName",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InvalidInsurance')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageDemoInsuranceMaster",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Create",
+						"type": "String"
+					},
+					{
+						"name": "1003344417",
+						"type": "String"
+					},
+					{
+						"name": "Prop_2",
+						"type": "String"
+					},
+					{
+						"name": "Prop_3",
+						"type": "String"
+					},
+					{
+						"name": "Prop_4",
+						"type": "String"
+					},
+					{
+						"name": "Prop_5",
+						"type": "String"
+					},
+					{
+						"name": "Prop_6",
+						"type": "String"
+					},
+					{
+						"name": "Prop_7",
+						"type": "String"
+					},
+					{
+						"name": "Prop_8",
+						"type": "String"
+					},
+					{
+						"name": "Prop_9",
+						"type": "String"
+					},
+					{
+						"name": "Capital0",
+						"type": "String"
+					},
+					{
+						"name": "Insurance Name Can not be Null",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageDemoInsuranceMaster')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InvalidLN')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					},
+					{
+						"name": "InvalidZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidNPI",
+						"type": "String"
+					},
+					{
+						"name": "InvalidProviderID",
+						"type": "String"
+					},
+					{
+						"name": "InvalidPlatfromName",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InvalidNPI')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InvalidPlatformName')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					},
+					{
+						"name": "InvalidZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidNPI",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InvalidProviderId')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					},
+					{
+						"name": "InvalidZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidNPI",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Invalidinsurancename')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageForInsuranceMasterName",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageForInsuranceMasterName')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/NewIns')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "R1ExternalInsuranceMaster.csv",
+						"container": "input"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/NewInsuranceCSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageDemoInsuranceMaster",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "R1ExternalInsuranceMaster.csv",
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageDemoInsuranceMaster')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PlatformMapping')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ProviderPlatformMappingID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EhrPlatformID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SciClientID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SciClientLocationId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProviderId",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "UserId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CreatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "LastUpdatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "RowHash",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IsDeleted",
+						"type": "bit"
+					},
+					{
+						"name": "UpdatedBy",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ProviderPlatformMapping"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/UpdatedInsuranceMaste')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageForInsuranceMasterName",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "R1ExternalInsuranceMaster.csv",
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageForInsuranceMasterName')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ValidInsuranceNameFile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageForInsuranceMasterName",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "invalidinsuranceMaster.csv",
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageForInsuranceMasterName')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ValidLookup')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().FileName",
+							"type": "Expression"
+						},
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/location')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "PrimaryPhone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SecondaryPhone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Fax",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Email",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AddressLine1",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AddressLine2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AddressLine3",
+						"type": "nvarchar"
+					},
+					{
+						"name": "City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "State",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ZipCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastUpdatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "SciClientID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SciProviderId",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "LocationMode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EhrPlatformID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PlatformLocationID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "UserId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CreatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "RowHash",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IsDeleted",
+						"type": "bit"
+					},
+					{
+						"name": "UpdatedBy",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ExternalId",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "LocationType",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Location"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/zipcode')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().FileName",
+							"type": "Expression"
+						},
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageDemoInsuranceMaster')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlobStorageDemoInsuranceMaster_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageForInsuranceMasterName')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlobStorageForInsuranceMasterName_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageNew')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlobStorageNew_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDB_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDBForBlobToSql')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDBForBlobToSql_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger2')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "InsuranceMaster",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/input/blobs/",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger2_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/InsuranceMaster')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/triggerinsurance')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/container1/blobs/insert",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('triggerinsurance_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflowAssertForInsuranceMaster')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "InsuranceMasterNameAssert",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Invalidinsurancename",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "ValidInsuranceNameFile",
+								"type": "DatasetReference"
+							},
+							"name": "ValidCSV"
+						}
+					],
+					"transformations": [
+						{
+							"name": "assertForInsuranceMasterName"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "split1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          OperationType as string,",
+						"          NPI as string,",
+						"          PlatformName as string,",
+						"          PlatformProviderId as string,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          ZipCode as string,",
+						"          City as string,",
+						"          State as string,",
+						"          InsuranceName as string,",
+						"          InsuranceDescription as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"derivedColumn1 assert(expectTrue(iifNull(InsuranceName, 'Can not Be Null', InsuranceName), false, 'checkInsuranceName', null, \"InsuranceName can not be null\")) ~> assertForInsuranceMasterName",
+						"source1 derive(InsuranceName = iifNull(InsuranceName, '', InsuranceName),",
+						"     partitionBy('hash', 1)) ~> derivedColumn1",
+						"assertForInsuranceMasterName derive(ErrorMsg = assertErrorMessages(),",
+						"          ErrorNullInsuranceName = at(assertErrorMessages(),'checkInsuranceName')) ~> derivedColumn2",
+						"derivedColumn2 split(hasError('checkInsuranceName'),",
+						"     disjoint: true) ~> split1@(InvalidInsuranceName, ValidFile)",
+						"split1@InvalidInsuranceName sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string,",
+						"          Column_7 as string,",
+						"          Column_8 as string,",
+						"          Column_9 as string,",
+						"          Column_10 as string,",
+						"          Column_11 as string",
+						"     ),",
+						"     partitionFileNames:['Assert.csvv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     ignoreAssertFailedRows: false,",
+						"     partitionBy('hash', 1)) ~> sink1",
+						"split1@ValidFile sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string,",
+						"          Column_7 as string,",
+						"          Column_8 as string,",
+						"          Column_9 as string,",
+						"          Column_10 as string,",
+						"          Column_11 as string",
+						"     ),",
+						"     partitionFileNames:['AssertValid.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     ignoreAssertFailedRows: false,",
+						"     partitionBy('hash', 1)) ~> ValidCSV"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/InsuranceMasterNameAssert')]",
+				"[concat(variables('factoryId'), '/datasets/Invalidinsurancename')]",
+				"[concat(variables('factoryId'), '/datasets/ValidInsuranceNameFile')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflowAssertInsurance')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "NewIns",
+								"type": "DatasetReference"
+							},
+							"name": "InsuranceMasterName"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference"
+							},
+							"name": "Provider"
+						},
+						{
+							"dataset": {
+								"referenceName": "PlatformMapping",
+								"type": "DatasetReference"
+							},
+							"name": "PlatformMapping"
+						},
+						{
+							"dataset": {
+								"referenceName": "EhrPlatform",
+								"type": "DatasetReference"
+							},
+							"name": "EhrPlatform"
+						},
+						{
+							"dataset": {
+								"referenceName": "location",
+								"type": "DatasetReference"
+							},
+							"name": "location"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DelimitedText2",
+								"type": "DatasetReference"
+							},
+							"name": "ValidInsuranceMasterFile"
+						},
+						{
+							"dataset": {
+								"referenceName": "DelimitedText4",
+								"type": "DatasetReference"
+							},
+							"name": "invalidinsurance"
+						}
+					],
+					"transformations": [
+						{
+							"name": "InvalidInsuranceMaster"
+						},
+						{
+							"name": "InvalidInsuranceMasteFile"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "assert1"
+						},
+						{
+							"name": "window1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          OperationType as string,",
+						"          NPI as string,",
+						"          PlatformName as string,",
+						"          PlatformProviderId as string,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          ZipCode as string,",
+						"          City as string,",
+						"          State as string,",
+						"          InsuranceName as string,",
+						"          InsuranceDescription as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     limit: 100,",
+						"     ignoreNoFilesFound: false) ~> InsuranceMasterName",
+						"source(output(",
+						"          ID as long,",
+						"          SciClientID as string,",
+						"          SciClientLocationId as string,",
+						"          ProviderId as string,",
+						"          ProviderType as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          Prefix as string,",
+						"          Suffix as string,",
+						"          PrimaryPhone as string,",
+						"          SecondaryPhone as string,",
+						"          Fax as string,",
+						"          Website as string,",
+						"          Email as string,",
+						"          DEA as string,",
+						"          NPI as string,",
+						"          ProviderPicture as binary,",
+						"          MarketingPicture as binary,",
+						"          Birthdate as timestamp,",
+						"          IsPlatform as boolean,",
+						"          LocationID as long,",
+						"          Gender as string,",
+						"          PersonalStatement as string,",
+						"          BoardCertifications as string,",
+						"          EducationAndTraining as string,",
+						"          Affiliation as string,",
+						"          PlatformLocationId as string,",
+						"          UsesOnlineScheduling as boolean,",
+						"          AcceptsNewPatients as boolean,",
+						"          AcceptsVideoVisits as boolean,",
+						"          ZipCode as string,",
+						"          UserId as string,",
+						"          CreatedOn as timestamp,",
+						"          LastUpdatedOn as timestamp,",
+						"          RowHash as integer,",
+						"          IsDeleted as boolean,",
+						"          UpdatedBy as string,",
+						"          DefaultBookingInstructionForPatient as string,",
+						"          Fellowship as string,",
+						"          Internship as string,",
+						"          PCPNumber as string,",
+						"          ProviderBio as string,",
+						"          Residency as string,",
+						"          ProviderPictureFileName as string,",
+						"          PictureLink as string,",
+						"          VideoLink as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> Provider",
+						"source(output(",
+						"          ID as long,",
+						"          ProviderPlatformMappingID as string,",
+						"          EhrPlatformID as string,",
+						"          SciClientID as string,",
+						"          SciClientLocationId as string,",
+						"          ProviderId as long,",
+						"          UserId as string,",
+						"          CreatedOn as timestamp,",
+						"          LastUpdatedOn as timestamp,",
+						"          RowHash as integer,",
+						"          IsDeleted as boolean,",
+						"          UpdatedBy as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> PlatformMapping",
+						"source(output(",
+						"          ID as string,",
+						"          Name as string,",
+						"          Description as string,",
+						"          Active as boolean,",
+						"          SupportsCachedScheduling as boolean,",
+						"          CachedSchedulingChunks as integer,",
+						"          ProvidesIncrementalUpdates as boolean,",
+						"          UserId as string,",
+						"          CreatedOn as timestamp,",
+						"          LastUpdatedOn as timestamp,",
+						"          RowHash as integer,",
+						"          IsDeleted as boolean,",
+						"          UpdatedBy as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> EhrPlatform",
+						"source(output(",
+						"          ID as long,",
+						"          PrimaryPhone as string,",
+						"          SecondaryPhone as string,",
+						"          Fax as string,",
+						"          Email as string,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          AddressLine3 as string,",
+						"          City as string,",
+						"          State as string,",
+						"          ZipCode as string,",
+						"          LastUpdatedOn as timestamp,",
+						"          SciClientID as string,",
+						"          PlatformProviderId as string,",
+						"          SciProviderId as long,",
+						"          LocationMode as string,",
+						"          EhrPlatformID as string,",
+						"          PlatformLocationID as string,",
+						"          Name as string,",
+						"          UserId as string,",
+						"          CreatedOn as timestamp,",
+						"          RowHash as integer,",
+						"          IsDeleted as boolean,",
+						"          UpdatedBy as string,",
+						"          ExternalId as long,",
+						"          LocationType as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> location",
+						"assert1 derive(ErrorMssage = at (assertErrorMessages(),'assert1'),",
+						"          InvalidKeyLookup = at(assertErrorMessages(), 'KeyLook'),",
+						"          InvalidZipCode = at(assertErrorMessages(), 'Check ZipCode'),",
+						"          InvalidNPI = at(assertErrorMessages(), 'checkNPI'),",
+						"          InvalidProviderID = at(assertErrorMessages(), 'CheckPlatformProviderId'),",
+						"          InvalidPlatfromName = at(assertErrorMessages(), 'CheckPlatformName'),",
+						"          InvalidFN = at(assertErrorMessages(), 'CheckFN'),",
+						"          InvalidLN = at(assertErrorMessages(), 'CheckLN'),",
+						"          NotExsistZipCode = at(assertErrorMessages(), 'ZipCode'),",
+						"          InvalidCity = at(assertErrorMessages(), 'City'),",
+						"          InvalidState = at(assertErrorMessages(), 'state'),",
+						"          columnValue = 1) ~> InvalidInsuranceMaster",
+						"window1 split(!isNull(ErrorMssage)||!isNull(InvalidKeyLookup)||!isNull(InvalidNPI) ||!isNull(InvalidProviderID) ||!isNull(InvalidPlatfromName) ||!isNull(InvalidLN) ||!isNull(InvalidFN)||!isNull(InvalidZipCode)||!isNull(NotExsistZipCode)||!isNull(InvalidCity)||!isNull(InvalidState),",
+						"     disjoint: false,",
+						"     partitionBy('hash', 1)) ~> InvalidInsuranceMasteFile@(InvalidInsuranceMasterFile, ValidInsuranceMasterFile)",
+						"InsuranceMasterName derive(InsuranceName = iifNull(InsuranceName, '', InsuranceName),",
+						"          {Key Lookup} = iif(!isNull(NPI) || (!isNull(PlatformName) &&  !isNull(PlatformProviderId))|| (!isNull(FirstName) && !isNull(LastName) &&!isNull(City) && !isNull(State))||(!isNull(FirstName) && !isNull(LastName) &&!isNull(ZipCode)) ,true(), false()),",
+						"     partitionBy('hash', 1)) ~> derivedColumn1",
+						"derivedColumn1, Provider, PlatformMapping, EhrPlatform, location assert(expectUnique(InsuranceName, false, 'assert1', null, \"Insurance Name Can not be Null\"),",
+						"     expectTrue(iif(((!isNull(InsuranceMasterName@NPI)) || (!isNull(PlatformName) &&  !isNull(InsuranceMasterName@PlatformProviderId))|| (!isNull(InsuranceMasterName@FirstName) && !isNull(InsuranceMasterName@LastName) &&!isNull(InsuranceMasterName@City) && !isNull(InsuranceMasterName@State))||(!isNull(InsuranceMasterName@FirstName) && !isNull(InsuranceMasterName@LastName) &&!isNull(InsuranceMasterName@ZipCode))) ,true(), false()), false, 'KeyLook', null, \"One key Look up required\"),",
+						"     expectTrue(iif(((isNull(InsuranceMasterName@ZipCode) && {Key Lookup}==true()) ||(!isNull(InsuranceMasterName@ZipCode) && regexMatch(InsuranceMasterName@ZipCode,'^[1-9][0-9]{4}$'))), true(), false()), false, 'Check ZipCode', null, \"Zip code is Not Valid\"),",
+						"     expectExists(Provider@NPI == InsuranceMasterName@NPI, true, 'checkNPI', null, \"NPI does Not Exsist\"),",
+						"     expectExists(ProviderPlatformMappingID == InsuranceMasterName@PlatformProviderId, true, 'CheckPlatformProviderId', null, \"ProviderId is not Exsist in providerPlatformMapping Table\"),",
+						"     expectExists(EhrPlatform@Name == PlatformName, true, 'CheckPlatformName', null, \"PlatformName is not Exsist in EhrPlatformTable\"),",
+						"     expectExists(Provider@FirstName == InsuranceMasterName@FirstName, true, 'CheckFN', null, \"First Name is Not exsist in Provider Table\"),",
+						"     expectExists(Provider@LastName == InsuranceMasterName@LastName, true, 'CheckLN', null, \"Last Name is Not exsist in Provider Table\"),",
+						"     expectExists(location@ZipCode == InsuranceMasterName@ZipCode, true, 'ZipCode', null, \"Zip code Not Exsist in Location Table\"),",
+						"     expectExists(location@City == InsuranceMasterName@City, true, 'City', null, \"City is Not Exsist in Location Table\"),",
+						"     expectExists(location@State == InsuranceMasterName@State, true, 'state', null, \"state is Not Exsist in Location Table\")) ~> assert1",
+						"InvalidInsuranceMaster window(asc(columnValue, true),",
+						"     RowHash = rowNumber()) ~> window1",
+						"InvalidInsuranceMasteFile@ValidInsuranceMasterFile sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          OperationType as string,",
+						"          NPI as string,",
+						"          PlatformName as string,",
+						"          PlatformProviderId as string,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          ZipCode as string,",
+						"          City as string,",
+						"          State as string,",
+						"          InsuranceName as string,",
+						"          InsuranceDescription as string",
+						"     ),",
+						"     partitionFileNames:['ValidInsuranceMaster.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     ignoreAssertFailedRows: false,",
+						"     partitionBy('hash', 1)) ~> ValidInsuranceMasterFile",
+						"InvalidInsuranceMasteFile@InvalidInsuranceMasterFile sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          OperationType as string,",
+						"          NPI as string,",
+						"          PlatformName as string,",
+						"          PlatformProviderId as string,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          ZipCode as string,",
+						"          City as string,",
+						"          State as string,",
+						"          InsuranceName as string,",
+						"          InsuranceDescription as string",
+						"     ),",
+						"     partitionFileNames:['invalidinsuranceMaster.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     ignoreAssertFailedRows: false,",
+						"     partitionBy('hash', 1)) ~> invalidinsurance"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/NewIns')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/PlatformMapping')]",
+				"[concat(variables('factoryId'), '/datasets/EhrPlatform')]",
+				"[concat(variables('factoryId'), '/datasets/location')]",
+				"[concat(variables('factoryId'), '/datasets/DelimitedText2')]",
+				"[concat(variables('factoryId'), '/datasets/DelimitedText4')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflowforBlobToSQL')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DelimitedText7",
+								"type": "DatasetReference"
+							},
+							"name": "dataflowforBlobToSQL"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable2",
+								"type": "DatasetReference"
+							},
+							"name": "blobToSql",
+							"rejectedDataLinkedService": {
+								"referenceName": "AzureBlobStorageNew",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumnforBlobToSQL"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          OperationType as string,",
+						"          NPI as string,",
+						"          PlatformName as string,",
+						"          PlatformProviderId as string,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          ZipCode as string,",
+						"          City as string,",
+						"          State as string,",
+						"          InsuranceName as string,",
+						"          InsuranceDescription as string,",
+						"          {Key Lookup} as string,",
+						"          ErrorMssage as string,",
+						"          InvalidKeyLookup as string,",
+						"          InvalidZipCode as string,",
+						"          InvalidNPI as string,",
+						"          InvalidProviderID as string,",
+						"          InvalidPlatfromName as string,",
+						"          InvalidFN as string,",
+						"          InvalidLN as string,",
+						"          NotExsistZipCode as string,",
+						"          InvalidCity as string,",
+						"          InvalidState as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> dataflowforBlobToSQL",
+						"dataflowforBlobToSQL derive(Errors = concatWS(',', ErrorMssage, InvalidKeyLookup,InvalidZipCode,InvalidNPI,InvalidProviderID,InvalidPlatfromName,InvalidFN,InvalidLN,NotExsistZipCode,InvalidCity,InvalidState),",
+						"          Status = iif(isNull(ErrorMssage)&&isNull(InvalidKeyLookup)&&isNull(InvalidZipCode)&&isNull(InvalidNPI)&&isNull(InvalidProviderID)&&isNull(InvalidPlatfromName)&&isNull(InvalidFN)&&isNull(InvalidLN)&&isNull(NotExsistZipCode), 'success', 'Failed'),",
+						"          IsDeleted = 0,",
+						"          CreatedOn = currentUTC(),",
+						"          LastUpdatedOn = currentUTC(),",
+						"          UserId = 'system',",
+						"          JobId = 01) ~> derivedColumnforBlobToSQL",
+						"derivedColumnforBlobToSQL sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ID as long,",
+						"          NPI as string,",
+						"          ProviderId as string,",
+						"          PlatformName as string,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          City as string,",
+						"          State as string,",
+						"          ZipCode as string,",
+						"          InsuranceName as string,",
+						"          InsuranceDescription as string,",
+						"          JobId as long,",
+						"          Status as string,",
+						"          Errors as string,",
+						"          SciClientID as string,",
+						"          SciClientLocationId as string,",
+						"          UserId as string,",
+						"          CreatedOn as timestamp,",
+						"          LastUpdatedOn as timestamp,",
+						"          RowHash as integer,",
+						"          IsDeleted as boolean,",
+						"          UpdatedBy as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     partitionBy('hash', 1)) ~> blobToSql"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DelimitedText7')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable2')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
+			]
+		}
+	]
+}
