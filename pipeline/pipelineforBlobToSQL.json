@@ -73,13 +73,6 @@
 												"type": "Expression"
 											}
 										}
-									},
-									"linkedServiceParameters": {
-										"dataflowforBlobToSQL": {
-											"schemaLinkedService": {
-												"FileName": "@item().name"
-											}
-										}
 									}
 								},
 								"compute": {
