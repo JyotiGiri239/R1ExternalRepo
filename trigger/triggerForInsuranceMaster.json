@@ -8,6 +8,9 @@
 				"pipelineReference": {
 					"referenceName": "InsuranceMaster",
 					"type": "PipelineReference"
+				},
+				"parameters": {
+					"FileName": "triggerbody().filename"
 				}
 			}
 		],
