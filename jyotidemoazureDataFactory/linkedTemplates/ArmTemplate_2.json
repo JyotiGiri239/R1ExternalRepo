@@ -17,6 +17,517 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/dataflowAssertForInsuranceMaster')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "InsuranceMasterNameAssert",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Invalidinsurancename",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "ValidInsuranceNameFile",
+								"type": "DatasetReference"
+							},
+							"name": "ValidCSV"
+						}
+					],
+					"transformations": [
+						{
+							"name": "assertForInsuranceMasterName"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "split1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          OperationType as string,",
+						"          NPI as string,",
+						"          PlatformName as string,",
+						"          PlatformProviderId as string,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          ZipCode as string,",
+						"          City as string,",
+						"          State as string,",
+						"          InsuranceName as string,",
+						"          InsuranceDescription as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"derivedColumn1 assert(expectTrue(iifNull(InsuranceName, 'Can not Be Null', InsuranceName), false, 'checkInsuranceName', null, \"InsuranceName can not be null\")) ~> assertForInsuranceMasterName",
+						"source1 derive(InsuranceName = iifNull(InsuranceName, '', InsuranceName),",
+						"     partitionBy('hash', 1)) ~> derivedColumn1",
+						"assertForInsuranceMasterName derive(ErrorMsg = assertErrorMessages(),",
+						"          ErrorNullInsuranceName = at(assertErrorMessages(),'checkInsuranceName')) ~> derivedColumn2",
+						"derivedColumn2 split(hasError('checkInsuranceName'),",
+						"     disjoint: true) ~> split1@(InvalidInsuranceName, ValidFile)",
+						"split1@InvalidInsuranceName sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string,",
+						"          Column_7 as string,",
+						"          Column_8 as string,",
+						"          Column_9 as string,",
+						"          Column_10 as string,",
+						"          Column_11 as string",
+						"     ),",
+						"     partitionFileNames:['Assert.csvv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     ignoreAssertFailedRows: false,",
+						"     partitionBy('hash', 1)) ~> sink1",
+						"split1@ValidFile sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string,",
+						"          Column_7 as string,",
+						"          Column_8 as string,",
+						"          Column_9 as string,",
+						"          Column_10 as string,",
+						"          Column_11 as string",
+						"     ),",
+						"     partitionFileNames:['AssertValid.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     ignoreAssertFailedRows: false,",
+						"     partitionBy('hash', 1)) ~> ValidCSV"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflowAssertInsurance')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "NewIns",
+								"type": "DatasetReference"
+							},
+							"name": "InsuranceMasterName"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference"
+							},
+							"name": "Provider"
+						},
+						{
+							"dataset": {
+								"referenceName": "PlatformMapping",
+								"type": "DatasetReference"
+							},
+							"name": "PlatformMapping"
+						},
+						{
+							"dataset": {
+								"referenceName": "EhrPlatform",
+								"type": "DatasetReference"
+							},
+							"name": "EhrPlatform"
+						},
+						{
+							"dataset": {
+								"referenceName": "location",
+								"type": "DatasetReference"
+							},
+							"name": "location"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable2",
+								"type": "DatasetReference"
+							},
+							"name": "ValidInsuranceMasterFile"
+						}
+					],
+					"transformations": [
+						{
+							"name": "InvalidInsuranceMaster"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "assert1"
+						},
+						{
+							"name": "window1"
+						},
+						{
+							"name": "StoreIntoDb"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          OperationType as string,",
+						"          NPI as string,",
+						"          PlatformName as string,",
+						"          PlatformProviderId as string,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          ZipCode as string,",
+						"          City as string,",
+						"          State as string,",
+						"          InsuranceName as string,",
+						"          InsuranceDescription as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     limit: 100,",
+						"     ignoreNoFilesFound: false) ~> InsuranceMasterName",
+						"source(output(",
+						"          ID as long,",
+						"          SciClientID as string,",
+						"          SciClientLocationId as string,",
+						"          ProviderId as string,",
+						"          ProviderType as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          Prefix as string,",
+						"          Suffix as string,",
+						"          PrimaryPhone as string,",
+						"          SecondaryPhone as string,",
+						"          Fax as string,",
+						"          Website as string,",
+						"          Email as string,",
+						"          DEA as string,",
+						"          NPI as string,",
+						"          ProviderPicture as binary,",
+						"          MarketingPicture as binary,",
+						"          Birthdate as timestamp,",
+						"          IsPlatform as boolean,",
+						"          LocationID as long,",
+						"          Gender as string,",
+						"          PersonalStatement as string,",
+						"          BoardCertifications as string,",
+						"          EducationAndTraining as string,",
+						"          Affiliation as string,",
+						"          PlatformLocationId as string,",
+						"          UsesOnlineScheduling as boolean,",
+						"          AcceptsNewPatients as boolean,",
+						"          AcceptsVideoVisits as boolean,",
+						"          ZipCode as string,",
+						"          UserId as string,",
+						"          CreatedOn as timestamp,",
+						"          LastUpdatedOn as timestamp,",
+						"          RowHash as integer,",
+						"          IsDeleted as boolean,",
+						"          UpdatedBy as string,",
+						"          DefaultBookingInstructionForPatient as string,",
+						"          Fellowship as string,",
+						"          Internship as string,",
+						"          PCPNumber as string,",
+						"          ProviderBio as string,",
+						"          Residency as string,",
+						"          ProviderPictureFileName as string,",
+						"          PictureLink as string,",
+						"          VideoLink as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> Provider",
+						"source(output(",
+						"          ID as long,",
+						"          ProviderPlatformMappingID as string,",
+						"          EhrPlatformID as string,",
+						"          SciClientID as string,",
+						"          SciClientLocationId as string,",
+						"          ProviderId as long,",
+						"          UserId as string,",
+						"          CreatedOn as timestamp,",
+						"          LastUpdatedOn as timestamp,",
+						"          RowHash as integer,",
+						"          IsDeleted as boolean,",
+						"          UpdatedBy as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> PlatformMapping",
+						"source(output(",
+						"          ID as string,",
+						"          Name as string,",
+						"          Description as string,",
+						"          Active as boolean,",
+						"          SupportsCachedScheduling as boolean,",
+						"          CachedSchedulingChunks as integer,",
+						"          ProvidesIncrementalUpdates as boolean,",
+						"          UserId as string,",
+						"          CreatedOn as timestamp,",
+						"          LastUpdatedOn as timestamp,",
+						"          RowHash as integer,",
+						"          IsDeleted as boolean,",
+						"          UpdatedBy as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> EhrPlatform",
+						"source(output(",
+						"          ID as long,",
+						"          PrimaryPhone as string,",
+						"          SecondaryPhone as string,",
+						"          Fax as string,",
+						"          Email as string,",
+						"          AddressLine1 as string,",
+						"          AddressLine2 as string,",
+						"          AddressLine3 as string,",
+						"          City as string,",
+						"          State as string,",
+						"          ZipCode as string,",
+						"          LastUpdatedOn as timestamp,",
+						"          SciClientID as string,",
+						"          PlatformProviderId as string,",
+						"          SciProviderId as long,",
+						"          LocationMode as string,",
+						"          EhrPlatformID as string,",
+						"          PlatformLocationID as string,",
+						"          Name as string,",
+						"          UserId as string,",
+						"          CreatedOn as timestamp,",
+						"          RowHash as integer,",
+						"          IsDeleted as boolean,",
+						"          UpdatedBy as string,",
+						"          ExternalId as long,",
+						"          LocationType as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> location",
+						"assert1 derive(ErrorMssage = at (assertErrorMessages(),'assert1'),",
+						"          InvalidKeyLookup = at(assertErrorMessages(), 'KeyLook'),",
+						"          InvalidZipCode = at(assertErrorMessages(), 'Check ZipCode'),",
+						"          InvalidNPI = at(assertErrorMessages(), 'checkNPI'),",
+						"          InvalidProviderID = at(assertErrorMessages(), 'CheckPlatformProviderId'),",
+						"          InvalidPlatfromName = at(assertErrorMessages(), 'CheckPlatformName'),",
+						"          InvalidFN = at(assertErrorMessages(), 'CheckFN'),",
+						"          InvalidLN = at(assertErrorMessages(), 'CheckLN'),",
+						"          NotExsistZipCode = at(assertErrorMessages(), 'ZipCode'),",
+						"          InvalidCity = at(assertErrorMessages(), 'City'),",
+						"          InvalidState = at(assertErrorMessages(), 'state'),",
+						"          columnValue = 1) ~> InvalidInsuranceMaster",
+						"InsuranceMasterName derive(InsuranceName = iifNull(InsuranceName, '', InsuranceName),",
+						"          {Key Lookup} = iif(!isNull(NPI) || (!isNull(PlatformName) &&  !isNull(PlatformProviderId))|| (!isNull(FirstName) && !isNull(LastName) &&!isNull(City) && !isNull(State))||(!isNull(FirstName) && !isNull(LastName) &&!isNull(ZipCode)) ,true(), false()),",
+						"     partitionBy('hash', 1)) ~> derivedColumn1",
+						"derivedColumn1, Provider, PlatformMapping, EhrPlatform, location assert(expectUnique(InsuranceName, false, 'assert1', null, \"Insurance Name Can not be Null\"),",
+						"     expectTrue(iif(((!isNull(InsuranceMasterName@NPI)) || (!isNull(PlatformName) &&  !isNull(InsuranceMasterName@PlatformProviderId))|| (!isNull(InsuranceMasterName@FirstName) && !isNull(InsuranceMasterName@LastName) &&!isNull(InsuranceMasterName@City) && !isNull(InsuranceMasterName@State))||(!isNull(InsuranceMasterName@FirstName) && !isNull(InsuranceMasterName@LastName) &&!isNull(InsuranceMasterName@ZipCode))) ,true(), false()), false, 'KeyLook', null, \"One key Look up required\"),",
+						"     expectTrue(iif(((isNull(InsuranceMasterName@ZipCode) && {Key Lookup}==true()) ||(!isNull(InsuranceMasterName@ZipCode) && regexMatch(InsuranceMasterName@ZipCode,'^[1-9][0-9]{4}$'))), true(), false()), false, 'Check ZipCode', null, \"Zip code is Not Valid\"),",
+						"     expectExists(Provider@NPI == InsuranceMasterName@NPI, true, 'checkNPI', null, \"NPI does Not Exsist\"),",
+						"     expectExists(ProviderPlatformMappingID == InsuranceMasterName@PlatformProviderId, true, 'CheckPlatformProviderId', null, \"ProviderId is not Exsist in providerPlatformMapping Table\"),",
+						"     expectExists(EhrPlatform@Name == PlatformName, true, 'CheckPlatformName', null, \"PlatformName is not Exsist in EhrPlatformTable\"),",
+						"     expectExists(Provider@FirstName == InsuranceMasterName@FirstName, true, 'CheckFN', null, \"First Name is Not exsist in Provider Table\"),",
+						"     expectExists(Provider@LastName == InsuranceMasterName@LastName, true, 'CheckLN', null, \"Last Name is Not exsist in Provider Table\"),",
+						"     expectExists(location@ZipCode == InsuranceMasterName@ZipCode, true, 'ZipCode', null, \"Zip code Not Exsist in Location Table\"),",
+						"     expectExists(location@City == InsuranceMasterName@City, true, 'City', null, \"City is Not Exsist in Location Table\"),",
+						"     expectExists(location@State == InsuranceMasterName@State, true, 'state', null, \"state is Not Exsist in Location Table\")) ~> assert1",
+						"InvalidInsuranceMaster window(asc(columnValue, true),",
+						"     RowHash = rowNumber()) ~> window1",
+						"window1 derive(Errors = concatWS(',', ErrorMssage, InvalidKeyLookup,InvalidZipCode,InvalidNPI,InvalidProviderID,InvalidPlatfromName,InvalidFN,InvalidLN,NotExsistZipCode,InvalidCity,InvalidState),",
+						"          Status = iif(isNull(ErrorMssage)&&isNull(InvalidKeyLookup)&&isNull(InvalidZipCode)&&isNull(InvalidNPI)&&isNull(InvalidProviderID)&&isNull(InvalidPlatfromName)&&isNull(InvalidFN)&&isNull(InvalidLN)&&isNull(NotExsistZipCode), 'success', 'Failed'),",
+						"          IsDeleted = 0,",
+						"          LastUpdatedOn = currentUTC(),",
+						"          CreatedOn = currentUTC(),",
+						"          UserId = 'system',",
+						"          JobId = 1) ~> StoreIntoDb",
+						"StoreIntoDb sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ID as long,",
+						"          NPI as string,",
+						"          ProviderId as string,",
+						"          PlatformName as string,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          City as string,",
+						"          State as string,",
+						"          ZipCode as string,",
+						"          InsuranceName as string,",
+						"          InsuranceDescription as string,",
+						"          JobId as long,",
+						"          Status as string,",
+						"          Errors as string,",
+						"          SciClientID as string,",
+						"          SciClientLocationId as string,",
+						"          UserId as string,",
+						"          CreatedOn as timestamp,",
+						"          LastUpdatedOn as timestamp,",
+						"          RowHash as integer,",
+						"          IsDeleted as boolean,",
+						"          UpdatedBy as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     ignoreAssertFailedRows: false,",
+						"     partitionBy('hash', 1)) ~> ValidInsuranceMasterFile"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflowforBlobToSQL')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DelimitedText7",
+								"type": "DatasetReference"
+							},
+							"name": "dataflowforBlobToSQL"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable2",
+								"type": "DatasetReference"
+							},
+							"name": "blobToSql",
+							"rejectedDataLinkedService": {
+								"referenceName": "AzureBlobStorageNew",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumnforBlobToSQL"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          OperationType as string,",
+						"          NPI as string,",
+						"          PlatformName as string,",
+						"          PlatformProviderId as string,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          ZipCode as string,",
+						"          City as string,",
+						"          State as string,",
+						"          InsuranceName as string,",
+						"          InsuranceDescription as string,",
+						"          {Key Lookup} as string,",
+						"          ErrorMssage as string,",
+						"          InvalidKeyLookup as string,",
+						"          InvalidZipCode as string,",
+						"          InvalidNPI as string,",
+						"          InvalidProviderID as string,",
+						"          InvalidPlatfromName as string,",
+						"          InvalidFN as string,",
+						"          InvalidLN as string,",
+						"          NotExsistZipCode as string,",
+						"          InvalidCity as string,",
+						"          InvalidState as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> dataflowforBlobToSQL",
+						"dataflowforBlobToSQL derive(Errors = concatWS(',', ErrorMssage, InvalidKeyLookup,InvalidZipCode,InvalidNPI,InvalidProviderID,InvalidPlatfromName,InvalidFN,InvalidLN,NotExsistZipCode,InvalidCity,InvalidState),",
+						"          Status = iif(isNull(ErrorMssage)&&isNull(InvalidKeyLookup)&&isNull(InvalidZipCode)&&isNull(InvalidNPI)&&isNull(InvalidProviderID)&&isNull(InvalidPlatfromName)&&isNull(InvalidFN)&&isNull(InvalidLN)&&isNull(NotExsistZipCode), 'success', 'Failed'),",
+						"          IsDeleted = 0,",
+						"          CreatedOn = currentUTC(),",
+						"          LastUpdatedOn = currentUTC(),",
+						"          UserId = 'system',",
+						"          JobId = 01) ~> derivedColumnforBlobToSQL",
+						"derivedColumnforBlobToSQL sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ID as long,",
+						"          NPI as string,",
+						"          ProviderId as string,",
+						"          PlatformName as string,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          City as string,",
+						"          State as string,",
+						"          ZipCode as string,",
+						"          InsuranceName as string,",
+						"          InsuranceDescription as string,",
+						"          JobId as long,",
+						"          Status as string,",
+						"          Errors as string,",
+						"          SciClientID as string,",
+						"          SciClientLocationId as string,",
+						"          UserId as string,",
+						"          CreatedOn as timestamp,",
+						"          LastUpdatedOn as timestamp,",
+						"          RowHash as integer,",
+						"          IsDeleted as boolean,",
+						"          UpdatedBy as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     partitionBy('hash', 1)) ~> blobToSql"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/InsuranceMaster')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -45,9 +556,9 @@
 									"PlatformMapping": {},
 									"EhrPlatform": {},
 									"location": {},
-									"ValidInsuranceMasterFile": {},
-									"invalidinsurance": {}
-								}
+									"ValidInsuranceMasterFile": {}
+								},
+								"linkedServiceParameters": {}
 							},
 							"staging": {},
 							"compute": {
@@ -65,7 +576,9 @@
 				"annotations": [],
 				"lastPublishTime": "2022-07-04T15:38:24Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflowAssertInsurance')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pipelineInsuranceMaster')]",
@@ -112,7 +625,9 @@
 				"annotations": [],
 				"lastPublishTime": "2022-06-30T12:30:46Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflowAssertForInsuranceMaster')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pipelineforBlobToSQL')]",
@@ -215,7 +730,9 @@
 				"annotations": [],
 				"lastPublishTime": "2022-07-05T08:49:22Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflowforBlobToSQL')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/trigger2')]",

@@ -27,6 +27,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDBForBlobToSql'"
 		},
+		"AzureSqlDatabaseNew_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseNew'"
+		},
+		"SqlServer1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SqlServer1'"
+		},
 		"trigger2_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
@@ -69,9 +77,9 @@
 									"PlatformMapping": {},
 									"EhrPlatform": {},
 									"location": {},
-									"ValidInsuranceMasterFile": {},
-									"invalidinsurance": {}
-								}
+									"ValidInsuranceMasterFile": {}
+								},
+								"linkedServiceParameters": {}
 							},
 							"staging": {},
 							"compute": {
@@ -2425,7 +2433,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "R1ExternalInsuranceMaster.csv",
+						"fileName": "R1ExternalInsuranceMaster1a714ae1-5b96-45c5-85be-b8604ad4d5fb.csv.csv",
 						"container": "input"
 					},
 					"columnDelimiter": ",",
@@ -3126,6 +3134,32 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseNew')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDatabaseNew_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SqlServer1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('SqlServer1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/trigger2')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -3173,6 +3207,16 @@
 						"Microsoft.Storage.BlobCreated"
 					]
 				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
 			},
 			"dependsOn": []
 		},
@@ -3342,25 +3386,15 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "DelimitedText2",
+								"referenceName": "AzureSqlTable2",
 								"type": "DatasetReference"
 							},
 							"name": "ValidInsuranceMasterFile"
-						},
-						{
-							"dataset": {
-								"referenceName": "DelimitedText4",
-								"type": "DatasetReference"
-							},
-							"name": "invalidinsurance"
 						}
 					],
 					"transformations": [
 						{
 							"name": "InvalidInsuranceMaster"
-						},
-						{
-							"name": "InvalidInsuranceMasteFile"
 						},
 						{
 							"name": "derivedColumn1"
@@ -3370,6 +3404,9 @@
 						},
 						{
 							"name": "window1"
+						},
+						{
+							"name": "StoreIntoDb"
 						}
 					],
 					"scriptLines": [
@@ -3524,9 +3561,6 @@
 						"          InvalidCity = at(assertErrorMessages(), 'City'),",
 						"          InvalidState = at(assertErrorMessages(), 'state'),",
 						"          columnValue = 1) ~> InvalidInsuranceMaster",
-						"window1 split(!isNull(ErrorMssage)||!isNull(InvalidKeyLookup)||!isNull(InvalidNPI) ||!isNull(InvalidProviderID) ||!isNull(InvalidPlatfromName) ||!isNull(InvalidLN) ||!isNull(InvalidFN)||!isNull(InvalidZipCode)||!isNull(NotExsistZipCode)||!isNull(InvalidCity)||!isNull(InvalidState),",
-						"     disjoint: false,",
-						"     partitionBy('hash', 1)) ~> InvalidInsuranceMasteFile@(InvalidInsuranceMasterFile, ValidInsuranceMasterFile)",
 						"InsuranceMasterName derive(InsuranceName = iifNull(InsuranceName, '', InsuranceName),",
 						"          {Key Lookup} = iif(!isNull(NPI) || (!isNull(PlatformName) &&  !isNull(PlatformProviderId))|| (!isNull(FirstName) && !isNull(LastName) &&!isNull(City) && !isNull(State))||(!isNull(FirstName) && !isNull(LastName) &&!isNull(ZipCode)) ,true(), false()),",
 						"     partitionBy('hash', 1)) ~> derivedColumn1",
@@ -3543,46 +3577,49 @@
 						"     expectExists(location@State == InsuranceMasterName@State, true, 'state', null, \"state is Not Exsist in Location Table\")) ~> assert1",
 						"InvalidInsuranceMaster window(asc(columnValue, true),",
 						"     RowHash = rowNumber()) ~> window1",
-						"InvalidInsuranceMasteFile@ValidInsuranceMasterFile sink(allowSchemaDrift: true,",
+						"window1 derive(Errors = concatWS(',', ErrorMssage, InvalidKeyLookup,InvalidZipCode,InvalidNPI,InvalidProviderID,InvalidPlatfromName,InvalidFN,InvalidLN,NotExsistZipCode,InvalidCity,InvalidState),",
+						"          Status = iif(isNull(ErrorMssage)&&isNull(InvalidKeyLookup)&&isNull(InvalidZipCode)&&isNull(InvalidNPI)&&isNull(InvalidProviderID)&&isNull(InvalidPlatfromName)&&isNull(InvalidFN)&&isNull(InvalidLN)&&isNull(NotExsistZipCode), 'success', 'Failed'),",
+						"          IsDeleted = 0,",
+						"          LastUpdatedOn = currentUTC(),",
+						"          CreatedOn = currentUTC(),",
+						"          UserId = 'system',",
+						"          JobId = 1) ~> StoreIntoDb",
+						"StoreIntoDb sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
-						"          OperationType as string,",
+						"          ID as long,",
 						"          NPI as string,",
+						"          ProviderId as string,",
 						"          PlatformName as string,",
-						"          PlatformProviderId as string,",
 						"          FirstName as string,",
 						"          LastName as string,",
-						"          ZipCode as string,",
 						"          City as string,",
 						"          State as string,",
-						"          InsuranceName as string,",
-						"          InsuranceDescription as string",
-						"     ),",
-						"     partitionFileNames:['ValidInsuranceMaster.csv'],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     ignoreAssertFailedRows: false,",
-						"     partitionBy('hash', 1)) ~> ValidInsuranceMasterFile",
-						"InvalidInsuranceMasteFile@InvalidInsuranceMasterFile sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          OperationType as string,",
-						"          NPI as string,",
-						"          PlatformName as string,",
-						"          PlatformProviderId as string,",
-						"          FirstName as string,",
-						"          LastName as string,",
 						"          ZipCode as string,",
-						"          City as string,",
-						"          State as string,",
 						"          InsuranceName as string,",
-						"          InsuranceDescription as string",
+						"          InsuranceDescription as string,",
+						"          JobId as long,",
+						"          Status as string,",
+						"          Errors as string,",
+						"          SciClientID as string,",
+						"          SciClientLocationId as string,",
+						"          UserId as string,",
+						"          CreatedOn as timestamp,",
+						"          LastUpdatedOn as timestamp,",
+						"          RowHash as integer,",
+						"          IsDeleted as boolean,",
+						"          UpdatedBy as string",
 						"     ),",
-						"     partitionFileNames:['invalidinsuranceMaster.csv'],",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
 						"     ignoreAssertFailedRows: false,",
-						"     partitionBy('hash', 1)) ~> invalidinsurance"
+						"     partitionBy('hash', 1)) ~> ValidInsuranceMasterFile"
 					]
 				}
 			},
@@ -3592,8 +3629,7 @@
 				"[concat(variables('factoryId'), '/datasets/PlatformMapping')]",
 				"[concat(variables('factoryId'), '/datasets/EhrPlatform')]",
 				"[concat(variables('factoryId'), '/datasets/location')]",
-				"[concat(variables('factoryId'), '/datasets/DelimitedText2')]",
-				"[concat(variables('factoryId'), '/datasets/DelimitedText4')]"
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable2')]"
 			]
 		},
 		{
