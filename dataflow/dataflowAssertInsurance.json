@@ -43,25 +43,15 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "DelimitedText2",
+						"referenceName": "AzureSqlTable2",
 						"type": "DatasetReference"
 					},
 					"name": "ValidInsuranceMasterFile"
-				},
-				{
-					"dataset": {
-						"referenceName": "DelimitedText4",
-						"type": "DatasetReference"
-					},
-					"name": "invalidinsurance"
 				}
 			],
 			"transformations": [
 				{
 					"name": "InvalidInsuranceMaster"
-				},
-				{
-					"name": "InvalidInsuranceMasteFile"
 				},
 				{
 					"name": "derivedColumn1"
@@ -71,6 +61,9 @@
 				},
 				{
 					"name": "window1"
+				},
+				{
+					"name": "StoreIntoDb"
 				}
 			],
 			"scriptLines": [
@@ -225,9 +218,6 @@
 				"          InvalidCity = at(assertErrorMessages(), 'City'),",
 				"          InvalidState = at(assertErrorMessages(), 'state'),",
 				"          columnValue = 1) ~> InvalidInsuranceMaster",
-				"window1 split(!isNull(ErrorMssage)||!isNull(InvalidKeyLookup)||!isNull(InvalidNPI) ||!isNull(InvalidProviderID) ||!isNull(InvalidPlatfromName) ||!isNull(InvalidLN) ||!isNull(InvalidFN)||!isNull(InvalidZipCode)||!isNull(NotExsistZipCode)||!isNull(InvalidCity)||!isNull(InvalidState),",
-				"     disjoint: false,",
-				"     partitionBy('hash', 1)) ~> InvalidInsuranceMasteFile@(InvalidInsuranceMasterFile, ValidInsuranceMasterFile)",
 				"InsuranceMasterName derive(InsuranceName = iifNull(InsuranceName, '', InsuranceName),",
 				"          {Key Lookup} = iif(!isNull(NPI) || (!isNull(PlatformName) &&  !isNull(PlatformProviderId))|| (!isNull(FirstName) && !isNull(LastName) &&!isNull(City) && !isNull(State))||(!isNull(FirstName) && !isNull(LastName) &&!isNull(ZipCode)) ,true(), false()),",
 				"     partitionBy('hash', 1)) ~> derivedColumn1",
@@ -244,46 +234,49 @@
 				"     expectExists(location@State == InsuranceMasterName@State, true, 'state', null, \"state is Not Exsist in Location Table\")) ~> assert1",
 				"InvalidInsuranceMaster window(asc(columnValue, true),",
 				"     RowHash = rowNumber()) ~> window1",
-				"InvalidInsuranceMasteFile@ValidInsuranceMasterFile sink(allowSchemaDrift: true,",
+				"window1 derive(Errors = concatWS(',', ErrorMssage, InvalidKeyLookup,InvalidZipCode,InvalidNPI,InvalidProviderID,InvalidPlatfromName,InvalidFN,InvalidLN,NotExsistZipCode,InvalidCity,InvalidState),",
+				"          Status = iif(isNull(ErrorMssage)&&isNull(InvalidKeyLookup)&&isNull(InvalidZipCode)&&isNull(InvalidNPI)&&isNull(InvalidProviderID)&&isNull(InvalidPlatfromName)&&isNull(InvalidFN)&&isNull(InvalidLN)&&isNull(NotExsistZipCode), 'success', 'Failed'),",
+				"          IsDeleted = 0,",
+				"          LastUpdatedOn = currentUTC(),",
+				"          CreatedOn = currentUTC(),",
+				"          UserId = 'system',",
+				"          JobId = 1) ~> StoreIntoDb",
+				"StoreIntoDb sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
-				"          OperationType as string,",
+				"          ID as long,",
 				"          NPI as string,",
+				"          ProviderId as string,",
 				"          PlatformName as string,",
-				"          PlatformProviderId as string,",
 				"          FirstName as string,",
 				"          LastName as string,",
-				"          ZipCode as string,",
 				"          City as string,",
 				"          State as string,",
-				"          InsuranceName as string,",
-				"          InsuranceDescription as string",
-				"     ),",
-				"     partitionFileNames:['ValidInsuranceMaster.csv'],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     ignoreAssertFailedRows: false,",
-				"     partitionBy('hash', 1)) ~> ValidInsuranceMasterFile",
-				"InvalidInsuranceMasteFile@InvalidInsuranceMasterFile sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          OperationType as string,",
-				"          NPI as string,",
-				"          PlatformName as string,",
-				"          PlatformProviderId as string,",
-				"          FirstName as string,",
-				"          LastName as string,",
 				"          ZipCode as string,",
-				"          City as string,",
-				"          State as string,",
 				"          InsuranceName as string,",
-				"          InsuranceDescription as string",
+				"          InsuranceDescription as string,",
+				"          JobId as long,",
+				"          Status as string,",
+				"          Errors as string,",
+				"          SciClientID as string,",
+				"          SciClientLocationId as string,",
+				"          UserId as string,",
+				"          CreatedOn as timestamp,",
+				"          LastUpdatedOn as timestamp,",
+				"          RowHash as integer,",
+				"          IsDeleted as boolean,",
+				"          UpdatedBy as string",
 				"     ),",
-				"     partitionFileNames:['invalidinsuranceMaster.csv'],",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
 				"     ignoreAssertFailedRows: false,",
-				"     partitionBy('hash', 1)) ~> invalidinsurance"
+				"     partitionBy('hash', 1)) ~> ValidInsuranceMasterFile"
 			]
 		}
 	}
