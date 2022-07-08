@@ -67,14 +67,6 @@
 				}
 			}
 		],
-		"variables": {
-			"FileName": {
-				"type": "String"
-			},
-			"InsFileName": {
-				"type": "String"
-			}
-		},
 		"annotations": [],
 		"lastPublishTime": "2022-07-04T15:38:24Z"
 	},
