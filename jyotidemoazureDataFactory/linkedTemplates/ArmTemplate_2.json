@@ -6,16 +6,233 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "jyotidemoazureDataFactory"
-		},
-		"trigger2_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/location')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "PrimaryPhone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SecondaryPhone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Fax",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Email",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AddressLine1",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AddressLine2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AddressLine3",
+						"type": "nvarchar"
+					},
+					{
+						"name": "City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "State",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ZipCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastUpdatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "SciClientID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SciProviderId",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "LocationMode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EhrPlatformID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PlatformLocationID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "UserId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CreatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "RowHash",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IsDeleted",
+						"type": "bit"
+					},
+					{
+						"name": "UpdatedBy",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ExternalId",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "LocationType",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Location"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/zipcode')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().FileName",
+							"type": "Expression"
+						},
+						"container": "container1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/dataflowAssertForInsuranceMaster')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
@@ -202,6 +419,9 @@
 						}
 					],
 					"scriptLines": [
+						"parameters{",
+						"     FileName as string",
+						"}",
 						"source(output(",
 						"          OperationType as string,",
 						"          NPI as string,",
@@ -355,6 +575,7 @@
 						"          columnValue = 1) ~> InvalidInsuranceMaster",
 						"InsuranceMasterName derive(InsuranceName = iifNull(InsuranceName, '', InsuranceName),",
 						"          {Key Lookup} = iif(!isNull(NPI) || (!isNull(PlatformName) &&  !isNull(PlatformProviderId))|| (!isNull(FirstName) && !isNull(LastName) &&!isNull(City) && !isNull(State))||(!isNull(FirstName) && !isNull(LastName) &&!isNull(ZipCode)) ,true(), false()),",
+						"          File = $FileName,",
 						"     partitionBy('hash', 1)) ~> derivedColumn1",
 						"derivedColumn1, Provider, PlatformMapping, EhrPlatform, location assert(expectUnique(InsuranceName, false, 'assert1', null, \"Insurance Name Can not be Null\"),",
 						"     expectTrue(iif(((!isNull(InsuranceMasterName@NPI)) || (!isNull(PlatformName) &&  !isNull(InsuranceMasterName@PlatformProviderId))|| (!isNull(InsuranceMasterName@FirstName) && !isNull(InsuranceMasterName@LastName) &&!isNull(InsuranceMasterName@City) && !isNull(InsuranceMasterName@State))||(!isNull(InsuranceMasterName@FirstName) && !isNull(InsuranceMasterName@LastName) &&!isNull(InsuranceMasterName@ZipCode))) ,true(), false()), false, 'KeyLook', null, \"One key Look up required\"),",
@@ -415,7 +636,9 @@
 					]
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/location')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/dataflowforBlobToSQL')]",
@@ -534,9 +757,16 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Data flowForInsuranceMasterCSV",
+						"name": "dataflowAssertInsurance1",
 						"type": "ExecuteDataFlow",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Get Metadata1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "1.00:00:00",
 							"retry": 0,
@@ -549,7 +779,12 @@
 							"dataflow": {
 								"referenceName": "dataflowAssertInsurance",
 								"type": "DataFlowReference",
-								"parameters": {},
+								"parameters": {
+									"FileName": {
+										"value": "'@{activity('Get Metadata1').output.itemName}'",
+										"type": "Expression"
+									}
+								},
 								"datasetParameters": {
 									"InsuranceMasterName": {},
 									"Provider": {},
@@ -557,8 +792,7 @@
 									"EhrPlatform": {},
 									"location": {},
 									"ValidInsuranceMasterFile": {}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
@@ -567,11 +801,50 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "NewIns",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"itemName"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"variables": {
+					"FileName": {
+						"type": "String"
+					},
+					"InsFileName": {
+						"type": "String"
+					}
 				},
 				"annotations": [],
 				"lastPublishTime": "2022-07-04T15:38:24Z"
@@ -732,37 +1005,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/dataflowforBlobToSQL')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trigger2')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "InsuranceMaster",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/input/blobs/",
-					"blobPathEndsWith": ".csv",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('trigger2_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/InsuranceMaster')]"
 			]
 		}
 	]

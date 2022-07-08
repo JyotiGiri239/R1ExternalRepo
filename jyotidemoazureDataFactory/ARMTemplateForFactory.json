@@ -39,6 +39,10 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		},
+		"triggerForInsuranceMaster_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
+		},
 		"triggerinsurance_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
@@ -55,9 +59,16 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Data flowForInsuranceMasterCSV",
+						"name": "dataflowAssertInsurance1",
 						"type": "ExecuteDataFlow",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Get Metadata1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "1.00:00:00",
 							"retry": 0,
@@ -70,7 +81,12 @@
 							"dataflow": {
 								"referenceName": "dataflowAssertInsurance",
 								"type": "DataFlowReference",
-								"parameters": {},
+								"parameters": {
+									"FileName": {
+										"value": "'@{activity('Get Metadata1').output.itemName}'",
+										"type": "Expression"
+									}
+								},
 								"datasetParameters": {
 									"InsuranceMasterName": {},
 									"Provider": {},
@@ -78,8 +94,7 @@
 									"EhrPlatform": {},
 									"location": {},
 									"ValidInsuranceMasterFile": {}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
@@ -88,17 +103,57 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "NewIns",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"itemName"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"variables": {
+					"FileName": {
+						"type": "String"
+					},
+					"InsFileName": {
+						"type": "String"
+					}
+				},
 				"annotations": [],
 				"lastPublishTime": "2022-07-04T15:38:24Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/dataflowAssertInsurance')]"
+				"[concat(variables('factoryId'), '/dataflows/dataflowAssertInsurance')]",
+				"[concat(variables('factoryId'), '/datasets/NewIns')]"
 			]
 		},
 		{
@@ -2433,7 +2488,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "R1ExternalInsuranceMaster1a714ae1-5b96-45c5-85be-b8604ad4d5fb.csv.csv",
+						"fileName": "R1ExternalInsuranceMaster1a714ae1-5b96-45c5-85be-b8604ad4d5fb.csv",
 						"container": "input"
 					},
 					"columnDelimiter": ",",
@@ -3165,16 +3220,8 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "InsuranceMaster",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
+				"runtimeState": "Stopped",
+				"pipelines": [],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
 					"blobPathBeginsWith": "/input/blobs/",
@@ -3186,9 +3233,28 @@
 					]
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/InsuranceMaster')]"
-			]
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/triggerForInsuranceMaster')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/input/blobs/",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('triggerForInsuranceMaster_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/triggerinsurance')]",
@@ -3410,6 +3476,9 @@
 						}
 					],
 					"scriptLines": [
+						"parameters{",
+						"     FileName as string",
+						"}",
 						"source(output(",
 						"          OperationType as string,",
 						"          NPI as string,",
@@ -3563,6 +3632,7 @@
 						"          columnValue = 1) ~> InvalidInsuranceMaster",
 						"InsuranceMasterName derive(InsuranceName = iifNull(InsuranceName, '', InsuranceName),",
 						"          {Key Lookup} = iif(!isNull(NPI) || (!isNull(PlatformName) &&  !isNull(PlatformProviderId))|| (!isNull(FirstName) && !isNull(LastName) &&!isNull(City) && !isNull(State))||(!isNull(FirstName) && !isNull(LastName) &&!isNull(ZipCode)) ,true(), false()),",
+						"          File = $FileName,",
 						"     partitionBy('hash', 1)) ~> derivedColumn1",
 						"derivedColumn1, Provider, PlatformMapping, EhrPlatform, location assert(expectUnique(InsuranceName, false, 'assert1', null, \"Insurance Name Can not be Null\"),",
 						"     expectTrue(iif(((!isNull(InsuranceMasterName@NPI)) || (!isNull(PlatformName) &&  !isNull(InsuranceMasterName@PlatformProviderId))|| (!isNull(InsuranceMasterName@FirstName) && !isNull(InsuranceMasterName@LastName) &&!isNull(InsuranceMasterName@City) && !isNull(InsuranceMasterName@State))||(!isNull(InsuranceMasterName@FirstName) && !isNull(InsuranceMasterName@LastName) &&!isNull(InsuranceMasterName@ZipCode))) ,true(), false()), false, 'KeyLook', null, \"One key Look up required\"),",

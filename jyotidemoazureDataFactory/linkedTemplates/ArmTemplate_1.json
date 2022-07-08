@@ -13,6 +13,200 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText8')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					},
+					{
+						"name": "InvalidZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidNPI",
+						"type": "String"
+					},
+					{
+						"name": "InvalidProviderID",
+						"type": "String"
+					},
+					{
+						"name": "InvalidPlatfromName",
+						"type": "String"
+					},
+					{
+						"name": "InvalidFN",
+						"type": "String"
+					},
+					{
+						"name": "InvalidLN",
+						"type": "String"
+					},
+					{
+						"name": "NotExsistZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidCity",
+						"type": "String"
+					},
+					{
+						"name": "InvalidState",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EhrPlatform')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Description",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Active",
+						"type": "bit"
+					},
+					{
+						"name": "SupportsCachedScheduling",
+						"type": "bit"
+					},
+					{
+						"name": "CachedSchedulingChunks",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProvidesIncrementalUpdates",
+						"type": "bit"
+					},
+					{
+						"name": "UserId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CreatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "LastUpdatedOn",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "RowHash",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IsDeleted",
+						"type": "bit"
+					},
+					{
+						"name": "UpdatedBy",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "EhrPlatform"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/InsuranceMaster')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1033,7 +1227,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "R1ExternalInsuranceMaster1a714ae1-5b96-45c5-85be-b8604ad4d5fb.csv.csv",
+						"fileName": "R1ExternalInsuranceMaster1a714ae1-5b96-45c5-85be-b8604ad4d5fb.csv",
 						"container": "input"
 					},
 					"columnDelimiter": ",",
@@ -1425,227 +1619,6 @@
 					},
 					{
 						"name": "InsuranceDescription",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/location')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDB",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "ID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "PrimaryPhone",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SecondaryPhone",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Fax",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Email",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AddressLine1",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AddressLine2",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AddressLine3",
-						"type": "nvarchar"
-					},
-					{
-						"name": "City",
-						"type": "nvarchar"
-					},
-					{
-						"name": "State",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ZipCode",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LastUpdatedOn",
-						"type": "datetime2",
-						"scale": 7
-					},
-					{
-						"name": "SciClientID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PlatformProviderId",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SciProviderId",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "LocationMode",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EhrPlatformID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PlatformLocationID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Name",
-						"type": "nvarchar"
-					},
-					{
-						"name": "UserId",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CreatedOn",
-						"type": "datetime2",
-						"scale": 7
-					},
-					{
-						"name": "RowHash",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "IsDeleted",
-						"type": "bit"
-					},
-					{
-						"name": "UpdatedBy",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ExternalId",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "LocationType",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Location"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/zipcode')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageNew",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"FileName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().FileName",
-							"type": "Expression"
-						},
-						"container": "container1"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "OperationType",
-						"type": "String"
-					},
-					{
-						"name": "NPI",
-						"type": "String"
-					},
-					{
-						"name": "PlatformName",
-						"type": "String"
-					},
-					{
-						"name": "PlatformProviderId",
-						"type": "String"
-					},
-					{
-						"name": "FirstName",
-						"type": "String"
-					},
-					{
-						"name": "LastName",
-						"type": "String"
-					},
-					{
-						"name": "ZipCode",
-						"type": "String"
-					},
-					{
-						"name": "City",
-						"type": "String"
-					},
-					{
-						"name": "State",
-						"type": "String"
-					},
-					{
-						"name": "InsuranceName",
-						"type": "String"
-					},
-					{
-						"name": "InsuranceDescription",
-						"type": "String"
-					},
-					{
-						"name": "Key Lookup",
-						"type": "String"
-					},
-					{
-						"name": "ErrorMssage",
-						"type": "String"
-					},
-					{
-						"name": "InvalidKeyLookup",
 						"type": "String"
 					}
 				]
