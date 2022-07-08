@@ -68,7 +68,7 @@
 			],
 			"scriptLines": [
 				"parameters{",
-				"     InsFileName as string ('default')",
+				"     InsFileName as string",
 				"}",
 				"source(output(",
 				"          OperationType as string,",
