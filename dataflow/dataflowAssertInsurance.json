@@ -87,7 +87,6 @@
 				"     validateSchema: false,",
 				"     limit: 100,",
 				"     ignoreNoFilesFound: false,",
-				"     rowUrlColumn: ($FileName),",
 				"     modifiedAfter: (toTimestamp(1657238400071L)),",
 				"     modifiedBefore: (toTimestamp(1657238400815L))) ~> InsuranceMasterName",
 				"source(output(",
