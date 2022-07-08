@@ -73,8 +73,8 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "FileName",
-					"value": "@split(split(activity('Get FileName').output.itemName"
+					"variableName": "InsFileName",
+					"value": ""
 				}
 			},
 			{
@@ -102,7 +102,10 @@
 						"additionalColumns": [
 							{
 								"name": "InsFileName",
-								"value": "$$FILEPATH"
+								"value": {
+									"value": "@variables('InsFileName')",
+									"type": "Expression"
+								}
 							}
 						],
 						"storeSettings": {
@@ -126,6 +129,9 @@
 		],
 		"variables": {
 			"FileName": {
+				"type": "String"
+			},
+			"InsFileName": {
 				"type": "String"
 			}
 		},
