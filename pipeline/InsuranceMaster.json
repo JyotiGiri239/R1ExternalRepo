@@ -26,7 +26,10 @@
 						"referenceName": "dataflowAssertInsurance",
 						"type": "DataFlowReference",
 						"parameters": {
-							"InsFileName": "InsuranceFile"
+							"InsFileName": {
+								"value": "'@{activity('Get Metadata1').output.itemName}'",
+								"type": "Expression"
+							}
 						}
 					},
 					"compute": {
