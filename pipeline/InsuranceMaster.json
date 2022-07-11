@@ -24,13 +24,7 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflowAssertInsurance",
-						"type": "DataFlowReference",
-						"parameters": {
-							"InsFileName": {
-								"value": "@activity('Get Metadata1').output.itemName",
-								"type": "Expression"
-							}
-						}
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
