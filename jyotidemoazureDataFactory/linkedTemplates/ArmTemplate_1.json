@@ -1227,7 +1227,6 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "R1ExternalInsuranceMaster.csv",
 						"container": "input"
 					},
 					"columnDelimiter": ",",
