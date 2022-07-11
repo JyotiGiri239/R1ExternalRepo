@@ -67,9 +67,6 @@
 				}
 			],
 			"scriptLines": [
-				"parameters{",
-				"     FileName as string",
-				"}",
 				"source(output(",
 				"          OperationType as string,",
 				"          NPI as string,",
