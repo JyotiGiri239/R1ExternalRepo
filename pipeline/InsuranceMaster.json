@@ -29,6 +29,10 @@
 							"InsFileName": {
 								"value": "'@{variables('InsFileName')}'",
 								"type": "Expression"
+							},
+							"FileName": {
+								"value": "'@{variables('InsFileName')}'",
+								"type": "Expression"
 							}
 						}
 					},
