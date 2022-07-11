@@ -61,14 +61,7 @@
 					{
 						"name": "dataflowAssertInsurance1",
 						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "Get Metadata1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
+						"dependsOn": [],
 						"policy": {
 							"timeout": "1.00:00:00",
 							"retry": 0,
@@ -81,12 +74,7 @@
 							"dataflow": {
 								"referenceName": "dataflowAssertInsurance",
 								"type": "DataFlowReference",
-								"parameters": {
-									"FileName": {
-										"value": "'@{activity('Get Metadata1').output.itemName}'",
-										"type": "Expression"
-									}
-								},
+								"parameters": {},
 								"datasetParameters": {
 									"InsuranceMasterName": {},
 									"Provider": {},
@@ -102,37 +90,6 @@
 								"computeType": "General"
 							},
 							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "Get Metadata1",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "NewIns",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"fieldList": [
-								"itemName"
-							],
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
-							}
 						}
 					}
 				],
@@ -152,8 +109,7 @@
 				"lastPublishTime": "2022-07-04T15:38:24Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/dataflowAssertInsurance')]",
-				"[concat(variables('factoryId'), '/datasets/NewIns')]"
+				"[concat(variables('factoryId'), '/dataflows/dataflowAssertInsurance')]"
 			]
 		},
 		{
@@ -2488,7 +2444,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "R1ExternalInsuranceMaster1a714ae1-5b96-45c5-85be-b8604ad4d5fb.csv",
+						"fileName": "R1ExternalInsuranceMaster.csv",
 						"container": "input"
 					},
 					"columnDelimiter": ",",
@@ -3476,9 +3432,6 @@
 						}
 					],
 					"scriptLines": [
-						"parameters{",
-						"     FileName as string",
-						"}",
 						"source(output(",
 						"          OperationType as string,",
 						"          NPI as string,",

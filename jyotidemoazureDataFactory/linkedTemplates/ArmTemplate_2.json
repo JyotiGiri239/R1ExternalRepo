@@ -419,9 +419,6 @@
 						}
 					],
 					"scriptLines": [
-						"parameters{",
-						"     FileName as string",
-						"}",
 						"source(output(",
 						"          OperationType as string,",
 						"          NPI as string,",
@@ -759,14 +756,7 @@
 					{
 						"name": "dataflowAssertInsurance1",
 						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "Get Metadata1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
+						"dependsOn": [],
 						"policy": {
 							"timeout": "1.00:00:00",
 							"retry": 0,
@@ -779,12 +769,7 @@
 							"dataflow": {
 								"referenceName": "dataflowAssertInsurance",
 								"type": "DataFlowReference",
-								"parameters": {
-									"FileName": {
-										"value": "'@{activity('Get Metadata1').output.itemName}'",
-										"type": "Expression"
-									}
-								},
+								"parameters": {},
 								"datasetParameters": {
 									"InsuranceMasterName": {},
 									"Provider": {},
@@ -800,37 +785,6 @@
 								"computeType": "General"
 							},
 							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "Get Metadata1",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "NewIns",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"fieldList": [
-								"itemName"
-							],
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
-							}
 						}
 					}
 				],
