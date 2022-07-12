@@ -107,7 +107,7 @@
 						"type": "DelimitedTextSource",
 						"additionalColumns": [
 							{
-								"name": "FileName",
+								"name": "FileNames",
 								"value": {
 									"value": "@variables('InsFileName')",
 									"type": "Expression"
