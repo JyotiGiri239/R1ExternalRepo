@@ -84,7 +84,7 @@
 				"typeProperties": {
 					"variableName": "InsFileName",
 					"value": {
-						"value": "12345",
+						"value": "@substring(activity('Get Metadata1').output.itemName, \r\nindexOf(activity('Get Metadata1').output.itemName, '_'), \r\nsub(lastIndexOf(activity('Get Metadata1').output.itemName, '.'), 1))",
 						"type": "Expression"
 					}
 				}
