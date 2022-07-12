@@ -84,7 +84,7 @@
 				"typeProperties": {
 					"variableName": "InsFileName",
 					"value": {
-						"value": "@string(lastIndexOf(activity('Get Metadata1').output.itemName, '.'))",
+						"value": "@substring(activity('Get Metadata1').output.itemName,26,28)",
 						"type": "Expression"
 					}
 				}
