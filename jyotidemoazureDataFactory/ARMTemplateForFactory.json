@@ -63,7 +63,7 @@
 						"type": "ExecuteDataFlow",
 						"dependsOn": [
 							{
-								"activity": "Copy data1",
+								"activity": "Set variable1",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -81,7 +81,12 @@
 							"dataflow": {
 								"referenceName": "dataflowAssertInsurance",
 								"type": "DataFlowReference",
-								"parameters": {},
+								"parameters": {
+									"parameter1": {
+										"value": "'@{variables('InsFileName')}'",
+										"type": "Expression"
+									}
+								},
 								"datasetParameters": {
 									"InsuranceMasterName": {},
 									"Provider": {},
@@ -89,7 +94,8 @@
 									"EhrPlatform": {},
 									"location": {},
 									"ValidInsuranceMasterFile": {}
-								}
+								},
+								"linkedServiceParameters": {}
 							},
 							"staging": {},
 							"compute": {
@@ -149,84 +155,6 @@
 								"type": "Expression"
 							}
 						}
-					},
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Set variable1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"additionalColumns": [
-									{
-										"name": "FileName",
-										"value": {
-											"value": "@variables('InsFileName')",
-											"type": "Expression"
-										}
-									}
-								],
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"wildcardFileName": "*",
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings",
-									"copyBehavior": "MergeFiles"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".csv"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "NewIns",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "NewIns",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
 					}
 				],
 				"policy": {
@@ -234,9 +162,6 @@
 					"cancelAfter": {}
 				},
 				"variables": {
-					"FileName": {
-						"type": "String"
-					},
 					"InsFileName": {
 						"type": "String"
 					}
@@ -3569,6 +3494,9 @@
 						}
 					],
 					"scriptLines": [
+						"parameters{",
+						"     parameter1 as string (\"\")",
+						"}",
 						"source(output(",
 						"          OperationType as string,",
 						"          NPI as string,",
@@ -3719,7 +3647,8 @@
 						"          NotExsistZipCode = at(assertErrorMessages(), 'ZipCode'),",
 						"          InvalidCity = at(assertErrorMessages(), 'City'),",
 						"          InvalidState = at(assertErrorMessages(), 'state'),",
-						"          columnValue = 1) ~> InvalidInsuranceMaster",
+						"          columnValue = 1,",
+						"          column1 = $parameter1) ~> InvalidInsuranceMaster",
 						"InsuranceMasterName derive(InsuranceName = iifNull(InsuranceName, '', InsuranceName),",
 						"          {Key Lookup} = iif(!isNull(NPI) || (!isNull(PlatformName) &&  !isNull(PlatformProviderId))|| (!isNull(FirstName) && !isNull(LastName) &&!isNull(City) && !isNull(State))||(!isNull(FirstName) && !isNull(LastName) &&!isNull(ZipCode)) ,true(), false()),",
 						"     partitionBy('hash', 1)) ~> derivedColumn1",
