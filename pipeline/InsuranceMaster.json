@@ -161,9 +161,6 @@
 			}
 		],
 		"variables": {
-			"FileName": {
-				"type": "String"
-			},
 			"InsFileName": {
 				"type": "String"
 			}
