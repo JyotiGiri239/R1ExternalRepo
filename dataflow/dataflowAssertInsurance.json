@@ -67,6 +67,9 @@
 				}
 			],
 			"scriptLines": [
+				"parameters{",
+				"     parameter1 as string (\"\")",
+				"}",
 				"source(output(",
 				"          OperationType as string,",
 				"          NPI as string,",
