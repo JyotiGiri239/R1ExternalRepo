@@ -68,8 +68,7 @@
 			],
 			"scriptLines": [
 				"parameters{",
-				"     InsFileName as string,",
-				"     FileName as string ($InsFileName)",
+				"     InsFileName as string",
 				"}",
 				"source(output(",
 				"          OperationType as string,",
@@ -224,7 +223,7 @@
 				"          columnValue = 1) ~> InvalidInsuranceMaster",
 				"InsuranceMasterName derive(InsuranceName = iifNull(InsuranceName, '', InsuranceName),",
 				"          {Key Lookup} = iif(!isNull(NPI) || (!isNull(PlatformName) &&  !isNull(PlatformProviderId))|| (!isNull(FirstName) && !isNull(LastName) &&!isNull(City) && !isNull(State))||(!isNull(FirstName) && !isNull(LastName) &&!isNull(ZipCode)) ,true(), false()),",
-				"          FileName = $FileName,",
+				"          FileName = $InsFileName,",
 				"     partitionBy('hash', 1)) ~> derivedColumn1",
 				"derivedColumn1, Provider, PlatformMapping, EhrPlatform, location assert(expectUnique(InsuranceName, false, 'assert1', null, \"Insurance Name Can not be Null\"),",
 				"     expectTrue(iif(((!isNull(InsuranceMasterName@NPI)) || (!isNull(PlatformName) &&  !isNull(InsuranceMasterName@PlatformProviderId))|| (!isNull(InsuranceMasterName@FirstName) && !isNull(InsuranceMasterName@LastName) &&!isNull(InsuranceMasterName@City) && !isNull(InsuranceMasterName@State))||(!isNull(InsuranceMasterName@FirstName) && !isNull(InsuranceMasterName@LastName) &&!isNull(InsuranceMasterName@ZipCode))) ,true(), false()), false, 'KeyLook', null, \"One key Look up required\"),",
