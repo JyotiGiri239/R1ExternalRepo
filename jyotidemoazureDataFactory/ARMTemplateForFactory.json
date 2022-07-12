@@ -94,8 +94,7 @@
 									"EhrPlatform": {},
 									"location": {},
 									"ValidInsuranceMasterFile": {}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
@@ -151,7 +150,7 @@
 						"typeProperties": {
 							"variableName": "InsFileName",
 							"value": {
-								"value": "@activity('Get Metadata1').output.itemName",
+								"value": "@substring(activity('Get Metadata1').output.itemName, \r\nindexOf(activity('Get Metadata1').output.itemName, '_'), \r\nsub(lastIndexOf(activity('Get Metadata1').output.itemName, '.'), 1))",
 								"type": "Expression"
 							}
 						}
@@ -2506,7 +2505,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "R1ExternalInsuranceMaster.csv",
+						"fileName": "R1ExternalInsuranceMaster_12.csv",
 						"container": "input"
 					},
 					"columnDelimiter": ",",
@@ -3647,8 +3646,7 @@
 						"          NotExsistZipCode = at(assertErrorMessages(), 'ZipCode'),",
 						"          InvalidCity = at(assertErrorMessages(), 'City'),",
 						"          InvalidState = at(assertErrorMessages(), 'state'),",
-						"          columnValue = 1,",
-						"          column1 = $parameter1) ~> InvalidInsuranceMaster",
+						"          columnValue = 1) ~> InvalidInsuranceMaster",
 						"InsuranceMasterName derive(InsuranceName = iifNull(InsuranceName, '', InsuranceName),",
 						"          {Key Lookup} = iif(!isNull(NPI) || (!isNull(PlatformName) &&  !isNull(PlatformProviderId))|| (!isNull(FirstName) && !isNull(LastName) &&!isNull(City) && !isNull(State))||(!isNull(FirstName) && !isNull(LastName) &&!isNull(ZipCode)) ,true(), false()),",
 						"     partitionBy('hash', 1)) ~> derivedColumn1",
@@ -3671,7 +3669,7 @@
 						"          LastUpdatedOn = currentUTC(),",
 						"          CreatedOn = currentUTC(),",
 						"          UserId = 'system',",
-						"          JobId = 1) ~> StoreIntoDb",
+						"          JobId = $parameter1) ~> StoreIntoDb",
 						"StoreIntoDb sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
