@@ -84,7 +84,7 @@
 				"typeProperties": {
 					"variableName": "InsFileName",
 					"value": {
-						"value": "@activity('Get Metadata1').output.itemName",
+						"value": "12345",
 						"type": "Expression"
 					}
 				}
