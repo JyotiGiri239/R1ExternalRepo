@@ -420,8 +420,7 @@
 					],
 					"scriptLines": [
 						"parameters{",
-						"     InsFileName as string,",
-						"     FileName as string ($InsFileName)",
+						"     InsFileName as string",
 						"}",
 						"source(output(",
 						"          OperationType as string,",
@@ -782,11 +781,7 @@
 								"type": "DataFlowReference",
 								"parameters": {
 									"InsFileName": {
-										"value": "'@{variables('InsFileName')}'",
-										"type": "Expression"
-									},
-									"FileName": {
-										"value": "'@{variables('InsFileName')}'",
+										"value": "@variables('InsFileName')",
 										"type": "Expression"
 									}
 								},
@@ -797,8 +792,7 @@
 									"EhrPlatform": {},
 									"location": {},
 									"ValidInsuranceMasterFile": {}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
@@ -831,6 +825,7 @@
 							],
 							"storeSettings": {
 								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
 								"enablePartitionDiscovery": false
 							},
 							"formatSettings": {
