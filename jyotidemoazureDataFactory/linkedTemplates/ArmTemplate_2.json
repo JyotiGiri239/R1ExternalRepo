@@ -847,7 +847,7 @@
 						"typeProperties": {
 							"variableName": "InsFileName",
 							"value": {
-								"value": "@substring(activity('Get Metadata1').output.itemName, \nindexOf(activity('Get Metadata1').output.itemName, '_'), \nsub(lastIndexOf(activity('Get Metadata1').output.itemName, '.'), 1))",
+								"value": "@substring(activity('Get Metadata1').output.itemName, \nadd(indexOf(activity('Get Metadata1').output.itemName, '_'), 1),\nlastIndexOf(activity('Get Metadata1').output.itemName, '.'))",
 								"type": "Expression"
 							}
 						}
