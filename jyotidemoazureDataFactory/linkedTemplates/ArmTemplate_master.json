@@ -47,6 +47,10 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		},
+		"trigger3_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -141,6 +145,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"trigger3_properties_typeProperties_scope": {
+						"value": "[parameters('trigger3_properties_typeProperties_scope')]"
 					}
 				}
 			},
