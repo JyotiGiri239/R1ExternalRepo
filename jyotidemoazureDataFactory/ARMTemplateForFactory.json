@@ -39,6 +39,10 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		},
+		"trigger3_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
+		},
 		"triggerForInsuranceMaster_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
@@ -47,7 +51,7 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		},
-		"trigger3_properties_typeProperties_scope": {
+		"trigger4_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		}
@@ -3257,6 +3261,26 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/trigger3')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/input/blobs/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger3_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/triggerForInsuranceMaster')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -3837,7 +3861,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/trigger3')]",
+			"name": "[concat(parameters('factoryName'), '/trigger4')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -3856,7 +3880,7 @@
 				"typeProperties": {
 					"blobPathBeginsWith": "/input/blobs/",
 					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('trigger3_properties_typeProperties_scope')]",
+					"scope": "[parameters('trigger4_properties_typeProperties_scope')]",
 					"events": [
 						"Microsoft.Storage.BlobCreated"
 					]

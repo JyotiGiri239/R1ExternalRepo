@@ -13,6 +13,133 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText7')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageNew",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().FileName",
+							"type": "Expression"
+						},
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OperationType",
+						"type": "String"
+					},
+					{
+						"name": "NPI",
+						"type": "String"
+					},
+					{
+						"name": "PlatformName",
+						"type": "String"
+					},
+					{
+						"name": "PlatformProviderId",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceName",
+						"type": "String"
+					},
+					{
+						"name": "InsuranceDescription",
+						"type": "String"
+					},
+					{
+						"name": "Key Lookup",
+						"type": "String"
+					},
+					{
+						"name": "ErrorMssage",
+						"type": "String"
+					},
+					{
+						"name": "InvalidKeyLookup",
+						"type": "String"
+					},
+					{
+						"name": "InvalidZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidNPI",
+						"type": "String"
+					},
+					{
+						"name": "InvalidProviderID",
+						"type": "String"
+					},
+					{
+						"name": "InvalidPlatfromName",
+						"type": "String"
+					},
+					{
+						"name": "InvalidFN",
+						"type": "String"
+					},
+					{
+						"name": "InvalidLN",
+						"type": "String"
+					},
+					{
+						"name": "NotExsistZipCode",
+						"type": "String"
+					},
+					{
+						"name": "InvalidCity",
+						"type": "String"
+					},
+					{
+						"name": "InvalidState",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DelimitedText8')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1540,85 +1667,6 @@
 						"type": "String"
 					},
 					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ValidLookup')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageNew",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"FileName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().FileName",
-							"type": "Expression"
-						},
-						"container": "container1"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "OperationType",
-						"type": "String"
-					},
-					{
-						"name": "NPI",
-						"type": "String"
-					},
-					{
-						"name": "PlatformName",
-						"type": "String"
-					},
-					{
-						"name": "PlatformProviderId",
-						"type": "String"
-					},
-					{
-						"name": "FirstName",
-						"type": "String"
-					},
-					{
-						"name": "LastName",
-						"type": "String"
-					},
-					{
-						"name": "ZipCode",
-						"type": "String"
-					},
-					{
-						"name": "City",
-						"type": "String"
-					},
-					{
-						"name": "State",
-						"type": "String"
-					},
-					{
-						"name": "InsuranceName",
-						"type": "String"
-					},
-					{
-						"name": "InsuranceDescription",
 						"type": "String"
 					}
 				]

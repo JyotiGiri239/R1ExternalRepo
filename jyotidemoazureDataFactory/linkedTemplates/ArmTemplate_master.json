@@ -39,6 +39,10 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		},
+		"trigger3_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
+		},
 		"triggerForInsuranceMaster_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
@@ -47,7 +51,7 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		},
-		"trigger3_properties_typeProperties_scope": {
+		"trigger4_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		},
@@ -102,6 +106,9 @@
 					"trigger2_properties_typeProperties_scope": {
 						"value": "[parameters('trigger2_properties_typeProperties_scope')]"
 					},
+					"trigger3_properties_typeProperties_scope": {
+						"value": "[parameters('trigger3_properties_typeProperties_scope')]"
+					},
 					"triggerForInsuranceMaster_properties_typeProperties_scope": {
 						"value": "[parameters('triggerForInsuranceMaster_properties_typeProperties_scope')]"
 					},
@@ -146,8 +153,8 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"trigger3_properties_typeProperties_scope": {
-						"value": "[parameters('trigger3_properties_typeProperties_scope')]"
+					"trigger4_properties_typeProperties_scope": {
+						"value": "[parameters('trigger4_properties_typeProperties_scope')]"
 					}
 				}
 			},

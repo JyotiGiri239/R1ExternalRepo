@@ -29,13 +29,16 @@
 		"trigger2_properties_typeProperties_scope": {
 			"value": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		},
+		"trigger3_properties_typeProperties_scope": {
+			"value": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
+		},
 		"triggerForInsuranceMaster_properties_typeProperties_scope": {
 			"value": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		},
 		"triggerinsurance_properties_typeProperties_scope": {
 			"value": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		},
-		"trigger3_properties_typeProperties_scope": {
+		"trigger4_properties_typeProperties_scope": {
 			"value": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		}
 	}

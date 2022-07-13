@@ -39,6 +39,10 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
 		},
+		"trigger3_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
+		},
 		"triggerForInsuranceMaster_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/1367d6c5-5e94-41d4-99ac-45ce260688b2/resourceGroups/Jyoti_AzureBlobStorageRD/providers/Microsoft.Storage/storageAccounts/jyoti239"
@@ -157,6 +161,26 @@
 					"blobPathEndsWith": ".csv",
 					"ignoreEmptyBlobs": true,
 					"scope": "[parameters('trigger2_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger3')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/input/blobs/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger3_properties_typeProperties_scope')]",
 					"events": [
 						"Microsoft.Storage.BlobCreated"
 					]
@@ -914,135 +938,6 @@
 					"location": {
 						"type": "AzureBlobStorageLocation",
 						"fileName": "invalidinsuranceMaster.csv",
-						"container": "output"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "OperationType",
-						"type": "String"
-					},
-					{
-						"name": "NPI",
-						"type": "String"
-					},
-					{
-						"name": "PlatformName",
-						"type": "String"
-					},
-					{
-						"name": "PlatformProviderId",
-						"type": "String"
-					},
-					{
-						"name": "FirstName",
-						"type": "String"
-					},
-					{
-						"name": "LastName",
-						"type": "String"
-					},
-					{
-						"name": "ZipCode",
-						"type": "String"
-					},
-					{
-						"name": "City",
-						"type": "String"
-					},
-					{
-						"name": "State",
-						"type": "String"
-					},
-					{
-						"name": "InsuranceName",
-						"type": "String"
-					},
-					{
-						"name": "InsuranceDescription",
-						"type": "String"
-					},
-					{
-						"name": "Key Lookup",
-						"type": "String"
-					},
-					{
-						"name": "ErrorMssage",
-						"type": "String"
-					},
-					{
-						"name": "InvalidKeyLookup",
-						"type": "String"
-					},
-					{
-						"name": "InvalidZipCode",
-						"type": "String"
-					},
-					{
-						"name": "InvalidNPI",
-						"type": "String"
-					},
-					{
-						"name": "InvalidProviderID",
-						"type": "String"
-					},
-					{
-						"name": "InvalidPlatfromName",
-						"type": "String"
-					},
-					{
-						"name": "InvalidFN",
-						"type": "String"
-					},
-					{
-						"name": "InvalidLN",
-						"type": "String"
-					},
-					{
-						"name": "NotExsistZipCode",
-						"type": "String"
-					},
-					{
-						"name": "InvalidCity",
-						"type": "String"
-					},
-					{
-						"name": "InvalidState",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageNew')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DelimitedText7')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageNew",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"FileName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().FileName",
-							"type": "Expression"
-						},
 						"container": "output"
 					},
 					"columnDelimiter": ",",
