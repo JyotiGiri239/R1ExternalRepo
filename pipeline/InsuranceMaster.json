@@ -11,6 +11,18 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "Set variable2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set variable3",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
 				"policy": {
@@ -32,6 +44,10 @@
 							},
 							"parameter2": {
 								"value": "'@{variables('sciClientId')}'",
+								"type": "Expression"
+							},
+							"parameter3": {
+								"value": "'@{variables('SciClientLocationId')}'",
 								"type": "Expression"
 							}
 						}
@@ -86,9 +102,9 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "JobId",
+					"variableName": "sciClientId",
 					"value": {
-						"value": "@string(activity('Lookup1').output.FirstRow.ID)",
+						"value": "@string(activity('Lookup1').output.FirstRow.SciClientID)",
 						"type": "Expression"
 					}
 				}
@@ -124,6 +140,40 @@
 						"type": "DatasetReference"
 					}
 				}
+			},
+			{
+				"name": "Set variable2",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JobId",
+					"value": "@string(activity('Lookup1').output.FirstRow.ID)"
+				}
+			},
+			{
+				"name": "Set variable3",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SciClientLocationId",
+					"value": "@string(activity('Lookup1').output.FirstRow.SciClientLocationId)"
+				}
 			}
 		],
 		"variables": {
@@ -133,13 +183,7 @@
 			"JobId": {
 				"type": "String"
 			},
-			"FileName": {
-				"type": "String"
-			},
 			"SciClientLocationId": {
-				"type": "String"
-			},
-			"Test": {
 				"type": "String"
 			}
 		},
