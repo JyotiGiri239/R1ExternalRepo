@@ -29,6 +29,10 @@
 							"parameter1": {
 								"value": "'@{variables('JobId')}'",
 								"type": "Expression"
+							},
+							"parameter2": {
+								"value": "'@{variables('sciClientId')}'",
+								"type": "Expression"
 							}
 						}
 					},
