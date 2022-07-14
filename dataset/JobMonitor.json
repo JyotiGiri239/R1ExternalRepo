@@ -1,0 +1,84 @@
+{
+	"name": "JobMonitor",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabaseNew",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "UserId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CreatedOn",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "LastUpdatedOn",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "RowHash",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "UpdatedBy",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CreatedDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "Status",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProcessStartDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "ProcessEndDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "JobType",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SciClientID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SciClientLocationId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FileName",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "JobMonitors"
+		}
+	}
+}
