@@ -111,7 +111,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "select SciClientID, SciClientLocationId, ID   from JobMonitors  where FileName=  'R1ExternalLocationsc379e4fe-6ad8-4f89-b401-cbcfed200ece.csv'",
+						"sqlReaderQuery": "select SciClientID, SciClientLocationId, ID   from JobMonitors  where FileName=  @activity('Get Metadata1').output.itemName",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
