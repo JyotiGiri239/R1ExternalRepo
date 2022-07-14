@@ -27,7 +27,7 @@
 						"type": "DataFlowReference",
 						"parameters": {
 							"parameter1": {
-								"value": "'@{variables('InsFileName')}'",
+								"value": "'@{variables('JobId')}'",
 								"type": "Expression"
 							}
 						}
