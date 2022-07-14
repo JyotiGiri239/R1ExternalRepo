@@ -74,7 +74,7 @@
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Get Metadata1",
+						"activity": "Lookup1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -82,16 +82,71 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "InsFileName",
+					"variableName": "sciClientId",
 					"value": {
-						"value": "@substring(activity('Get Metadata1').output.itemName, \nadd(indexOf(activity('Get Metadata1').output.itemName, '_'), 1),\nsub(lastIndexOf(activity('Get Metadata1').output.itemName, '.'),add(indexOf(activity('Get Metadata1').output.itemName, '_'), 1)))",
+						"value": "@activity('Lookup1').output.FirstRow.SciClientID",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select SciClientID, SciClientLocationId, ID   from JobMonitors  where FileName=  'R1ExternalLocationsc379e4fe-6ad8-4f89-b401-cbcfed200ece.csv'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "JobMonitor",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Set variable2",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JobId",
+					"value": {
+						"value": "@string(activity('Lookup1').output.FirstRow.ID)",
 						"type": "Expression"
 					}
 				}
 			}
 		],
 		"variables": {
-			"InsFileName": {
+			"sciClientId": {
+				"type": "String"
+			},
+			"JobId": {
 				"type": "String"
 			}
 		},
