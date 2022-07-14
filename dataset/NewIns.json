@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "R1ExternalInsuranceMaster_12.csv",
+				"fileName": "R1ExternalInsuranceMasterd8c38df4-0e09-45e4-b46c-c443d6d13332.csv",
 				"container": "input"
 			},
 			"columnDelimiter": ",",
