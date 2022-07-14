@@ -94,7 +94,7 @@
 				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "Set variable3",
+						"activity": "Get Metadata1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -112,7 +112,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "@select SciClientID, SciClientLocationId, ID  \n from JobMonitors  where FileName= variables('FileName')",
+							"value": "select SciClientID, SciClientLocationId, ID  \n from JobMonitors  where FileName= activity('Get Metadata1').output.itemName",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
@@ -140,26 +140,6 @@
 					"variableName": "JobId",
 					"value": {
 						"value": "@string(activity('Lookup1').output.FirstRow.ID)",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "Set variable3",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Get Metadata1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "FileName",
-					"value": {
-						"value": "@activity('Get Metadata1').output.itemName",
 						"type": "Expression"
 					}
 				}
