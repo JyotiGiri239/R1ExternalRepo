@@ -72,7 +72,7 @@
 				"derivedColumn1 assert(expectUnique(InsuranceName, false, 'assert1', null, \"Insurance Name Can not be Null\"),",
 				"     expectTrue(iif(((!isNull(NPI)) || (!isNull(PlatformName) &&  !isNull(PlatformProviderId))|| (!isNull(FirstName) && !isNull(LastName) &&!isNull(City) && !isNull(State))||(!isNull(FirstName) && !isNull(LastName) &&!isNull(ZipCode))) ,true(), false()), false, 'KeyLook', null, \"One key Look up required\"),",
 				"     expectTrue(iif(((isNull(ZipCode) && {Key Lookup}==true()) ||(!isNull(ZipCode) && regexMatch(ZipCode,'^[1-9][0-9]{4}$'))), true(), false()), false, 'Check ZipCode', null, \"Zip code is Not Valid\"),",
-				"     expectTrue(iif(((isNull(FirstName) && {Key Lookup}==true())&&(!isNull(FirstName) && regexMatch(FirstName,' /^[a-zA-Z]{1,32}$/'))), true(), false()), false, 'FN', null, \"FN is not Valid\")) ~> assert1",
+				"     expectTrue(iif(((isNull(FirstName) && {Key Lookup}==true())||(!isNull(FirstName) && regexMatch(FirstName,' /^[a-zA-Z]{1,32}$/'))), true(), false()), false, 'FN', null, \"FN is not Valid\")) ~> assert1",
 				"InvalidInsuranceMaster window(asc(columnValue, true),",
 				"     RowHash = rowNumber()) ~> window1",
 				"window1 derive(Errors = concatWS(',', ErrorMssage, InvalidKeyLookup,InvalidZipCode),",
